@@ -7,33 +7,33 @@ import type { RootState } from '../store'
 // Types
 // =====================
 export interface User {
-  _id: string
-  username: string
-  role: 'Admin' | 'HOD' | 'Teacher' | 'Student'
-  refId: string // MongoDB ObjectId as string
-  lastLogin: string // ISO date string
-  token?: string // returned after login/registration
+    _id: string
+    username: string
+    role: 'Admin' | 'HOD' | 'Teacher' | 'Student'
+    refId: string // MongoDB ObjectId as string
+    lastLogin: string // ISO date string
+    token?: string // returned after login/registration
 }
 
 interface AuthState {
-  user: User | null
-  isError: boolean
-  isLoading: boolean
-  message: string
+    user: User | null
+    isError: boolean
+    isLoading: boolean
+    message: string
 }
 
 // =====================
 // Initial State
 // =====================
 const user: User | null = localStorage.getItem('user')
-  ? JSON.parse(localStorage.getItem('user') as string)
-  : null
+    ? JSON.parse(localStorage.getItem('user') as string)
+    : null
 
 const initialState: AuthState = {
-  user,
-  isError: false,
-  isLoading: false,
-  message: '',
+    user,
+    isError: false,
+    isLoading: false,
+    message: '',
 }
 
 // =====================
@@ -61,6 +61,22 @@ export const register = createAsyncThunk<
         }
     }
 )
+
+export const login = createAsyncThunk<
+    User, // Return type
+    { username: string; password: string }, // Input credentials
+    { rejectValue: string }
+    >('auth/login', async (credentials, thunkAPI) => {
+    try {
+        return await authService.login(credentials)
+    } catch (error: any) {
+        const message =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
+})
 
 // =====================
 // Slice
@@ -93,6 +109,19 @@ export const authSlice = createSlice({
             state.isError = true
             state.isLoading = false
             state.message = action.payload as string
+        })
+        .addCase(login.pending, (state) => {
+            state.isLoading = true
+        })
+        .addCase(login.fulfilled, (state, action: PayloadAction<User>) => {
+            state.isLoading = false
+            state.user = action.payload
+            state.message = 'Login successful'
+        })
+        .addCase(login.rejected, (state, action) => {
+            state.isLoading = false
+            state.isError = true
+            state.message = action.payload || 'Login failed'
         })
     },
 })
