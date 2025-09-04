@@ -49,7 +49,9 @@ export const register = createAsyncThunk<
         try {
             const state = thunkAPI.getState()
             const token = state.auth.user ? state.auth.user.token : null
-            return (!token) ? thunkAPI.rejectWithValue('No token found, Please login') : await authService.register(userData, token)
+            return (!token) 
+                ? thunkAPI.rejectWithValue('No token found, Please login') 
+                : await authService.register(userData, token)
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -64,35 +66,35 @@ export const register = createAsyncThunk<
 // Slice
 // =====================
 export const authSlice = createSlice({
-  name: 'auth',
-  initialState,
-  reducers: {
-    reset: (state) => {
-      state.isError = false
-      state.isLoading = false
-      state.message = ''
-    },
-    logout: (state) => {
-      state.user = null
-      localStorage.removeItem('user')
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(register.pending, (state) => {
-        state.isLoading = true
-      })
-      .addCase(register.fulfilled, (state, action: PayloadAction<User>) => {
+    name: 'auth',
+    initialState,
+    reducers: {
+        reset: (state) => {
+        state.isError = false
         state.isLoading = false
-        state.user = action.payload
-        state.message = 'User registered successfully'
-      })
-      .addCase(register.rejected, (state, action) => {
-        state.isError = true
-        state.isLoading = false
-        state.message = action.payload as string
-      })
-  },
+        state.message = ''
+        },
+        logout: (state) => {
+        state.user = null
+        localStorage.removeItem('user')
+        },
+    },
+    extraReducers: (builder) => {
+        builder
+        .addCase(register.pending, (state) => {
+            state.isLoading = true
+        })
+        .addCase(register.fulfilled, (state, action: PayloadAction<User>) => {
+            state.isLoading = false
+            state.user = action.payload
+            state.message = 'User registered successfully'
+        })
+        .addCase(register.rejected, (state, action) => {
+            state.isError = true
+            state.isLoading = false
+            state.message = action.payload as string
+        })
+    },
 })
 
 export const { reset, logout } = authSlice.actions

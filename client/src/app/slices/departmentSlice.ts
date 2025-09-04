@@ -66,43 +66,43 @@ export const createDepartment = createAsyncThunk<
     }
 );
 
-const departmentSlice = createSlice({
-  name: 'department',
-  initialState,
-  reducers: {
-    reset: (state) => {
-      state.isLoading = false;
-      state.isError = false;
-      state.message = '';
+export const departmentSlice = createSlice({
+    name: 'department',
+    initialState,
+    reducers: {
+        reset: (state) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.message = '';
+        },
     },
-  },
-  extraReducers: (builder) => {
-    builder
-        .addCase(fetchDepartments.pending, (state) => {
-            state.isLoading = true;
-        })
-        .addCase(fetchDepartments.fulfilled, (state, action: PayloadAction<Department[]>) => {
-            state.isLoading = false;
-            state.departments = action.payload;
-        })
-        .addCase(fetchDepartments.rejected, (state, action) => {
-            state.isLoading = false;
-            state.isError = true;
-            state.message = action.payload || 'Failed to fetch departments';
-        })
-        .addCase(createDepartment.pending, (state) => {
-            state.isLoading = true;
-        })
-        .addCase(createDepartment.fulfilled, (state, action: PayloadAction<Department>) => {
-            state.isLoading = false;
-            state.departments.push(action.payload);
-        })
-        .addCase(createDepartment.rejected, (state, action) => {
-            state.isLoading = false;
-            state.isError = true;
-            state.message = action.payload || 'Failed to create department';
-        });
-  },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchDepartments.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchDepartments.fulfilled, (state, action: PayloadAction<Department[]>) => {
+                state.isLoading = false;
+                state.departments = action.payload;
+            })
+            .addCase(fetchDepartments.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload || 'Failed to fetch departments';
+            })
+            .addCase(createDepartment.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(createDepartment.fulfilled, (state, action: PayloadAction<Department>) => {
+                state.isLoading = false;
+                state.departments.push(action.payload);
+            })
+            .addCase(createDepartment.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload || 'Failed to create department';
+            });
+    },
 });
 
 export const { reset } = departmentSlice.actions;

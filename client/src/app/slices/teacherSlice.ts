@@ -1,71 +1,69 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import studentService from "../../features/studentService";
+import teacherService from "../../features/teacherService";
 
-export interface Student {
+export interface Teacher {
     _id?: string;
     name: string;
-    rollNumber: string;
+    employeeId: string;
     department: string; // Department ObjectId
     contactDetails: { email: string; phone: string };
     dateOfJoining: string;
 }
 
-interface StudentState {
-    students: Student[];
+interface TeacherState {
+    teachers: Teacher[];
     isLoading: boolean;
     isError: boolean;
     message: string;
 }
 
-const initialState: StudentState = {
-    students: [],
+const initialState: TeacherState = {
+    teachers: [],
     isLoading: false,
     isError: false,
     message: "",
 };
 
-// Fetch all students
-export const fetchStudents = createAsyncThunk<
-    Student[],
+// Fetch all teachers
+export const fetchTeachers = createAsyncThunk<
+    Teacher[],
     void,
     { state: RootState; rejectValue: string }
-    >("students/fetchAll", async (_, thunkAPI) => {
+    >("teachers/fetchAll", async (_, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
         const token = state.auth.user ? state.auth.user.token : null;
         return (!token) 
             ? thunkAPI.rejectWithValue("No token found, Please login") 
-            : await studentService.getStudents(token);
+            : await teacherService.getTeachers(token);
     } catch (error: any) {
-        const message =
-        error.response?.data?.message || error.message || error.toString();
+        const message = error.response?.data?.message || error.message || error.toString();
         return thunkAPI.rejectWithValue(message);
     }
 });
 
-// Create a student
-export const createStudent = createAsyncThunk<
-    Student,
-    Student,
+// Create teacher
+export const createTeacher = createAsyncThunk<
+    Teacher,
+    Teacher,
     { state: RootState; rejectValue: string }
-    >("students/create", async (studentData, thunkAPI) => {
+    >("teacher/create", async (teacherData, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
         const token = state.auth.user ? state.auth.user.token : null;
         return (!token) 
             ? thunkAPI.rejectWithValue("No token found, Please login") 
-            : await studentService.createStudent(studentData, token);
+            : await teacherService.createTeacher(teacherData, token);
     } catch (error: any) {
-        const message =
-        error.response?.data?.message || error.message || error.toString();
+        const message = error.response?.data?.message || error.message || error.toString();
         return thunkAPI.rejectWithValue(message);
     }
 });
 
-export const studentSlice = createSlice({
-    name: "student",
+export const teacherSlice = createSlice({
+    name: "teacher",
     initialState,
     reducers: {
         reset: (state) => {
@@ -76,32 +74,32 @@ export const studentSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-        .addCase(fetchStudents.pending, (state) => {
+        .addCase(fetchTeachers.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(fetchStudents.fulfilled, (state, action: PayloadAction<Student[]>) => {
+        .addCase(fetchTeachers.fulfilled, (state, action: PayloadAction<Teacher[]>) => {
             state.isLoading = false;
-            state.students = action.payload;
+            state.teachers = action.payload;
         })
-        .addCase(fetchStudents.rejected, (state, action) => {
+        .addCase(fetchTeachers.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.message = action.payload || "Failed to fetch students";
+            state.message = action.payload || "Failed to fetch teachers";
         })
-        .addCase(createStudent.pending, (state) => {
+        .addCase(createTeacher.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(createStudent.fulfilled, (state, action: PayloadAction<Student>) => {
+        .addCase(createTeacher.fulfilled, (state, action: PayloadAction<Teacher>) => {
             state.isLoading = false;
-            state.students.push(action.payload);
+            state.teachers.push(action.payload);
         })
-        .addCase(createStudent.rejected, (state, action) => {
+        .addCase(createTeacher.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.message = action.payload || "Failed to create student";
+            state.message = action.payload || "Failed to create teacher";
         });
     },
 });
 
-export const { reset } = studentSlice.actions;
-export default studentSlice.reducer;
+export const { reset } = teacherSlice.actions;
+export default teacherSlice.reducer;
