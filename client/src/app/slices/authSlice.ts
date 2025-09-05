@@ -15,10 +15,20 @@ export interface User {
     token?: string // returned after login/registration
 }
 
+export interface LoginResponse {
+    success: boolean
+    data: { 
+        user: User 
+        token: string 
+    }
+    message: string
+}
+
 interface AuthState {
     user: User | null
     isError: boolean
     isLoading: boolean
+    isAuthenticated: boolean
     message: string
 }
 
@@ -33,6 +43,7 @@ const initialState: AuthState = {
     user,
     isError: false,
     isLoading: false,
+    isAuthenticated: !!user,
     message: '',
 }
 
@@ -63,12 +74,13 @@ export const register = createAsyncThunk<
 )
 
 export const login = createAsyncThunk<
-    User, // Return type
+    LoginResponse, // Return type
     { username: string; password: string }, // Input credentials
     { rejectValue: string }
     >('auth/login', async (credentials, thunkAPI) => {
     try {
-        return await authService.login(credentials)
+        const response = await authService.login(credentials);
+        return response;
     } catch (error: any) {
         const message =
             (error.response && error.response.data && error.response.data.message) ||
@@ -86,13 +98,14 @@ export const authSlice = createSlice({
     initialState,
     reducers: {
         reset: (state) => {
-        state.isError = false
-        state.isLoading = false
-        state.message = ''
+            state.isError = false
+            state.isLoading = false
+            state.isAuthenticated = false
+            state.message = ''
         },
         logout: (state) => {
-        state.user = null
-        localStorage.removeItem('user')
+            state.user = null
+            localStorage.removeItem('user')
         },
     },
     extraReducers: (builder) => {
@@ -113,9 +126,11 @@ export const authSlice = createSlice({
         .addCase(login.pending, (state) => {
             state.isLoading = true
         })
-        .addCase(login.fulfilled, (state, action: PayloadAction<User>) => {
+        .addCase(login.fulfilled, (state, action: PayloadAction<LoginResponse>) => {
             state.isLoading = false
-            state.user = action.payload
+            state.isAuthenticated = action.payload.success
+            state.user = action.payload.data.user
+            state.isError = false
             state.message = 'Login successful'
         })
         .addCase(login.rejected, (state, action) => {
