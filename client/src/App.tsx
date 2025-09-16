@@ -1,11 +1,15 @@
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 import Login from './pages/Login/Login';
-import { useSelector } from 'react-redux';
-import type { RootState } from './app/store';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Dashboard from './pages/Dashboard/Dashboard';
+import StudentList from './pages/Dashboard/StudentList';
 import './App.css'
+import Insights from './pages/Dashboard/Insigts';
+import DepartmentList from './pages/Dashboard/DepartmentList';
+import HODList from './pages/Dashboard/HODList';
+import TeacherList from './pages/Dashboard/TeacherList';
 
 // ✅ Define theme without initialColorScheme
 const customTheme = extendTheme({
@@ -15,18 +19,22 @@ const customTheme = extendTheme({
   },
 });
 
-function App() {
-    const { user } = useSelector((state: RootState) => state.auth);
-        
+function App() { 
 
     return (
         <CssVarsProvider theme={customTheme} defaultMode="light" disableTransitionOnChange>
-            <ToastContainer position="top-right" autoClose={3000} />
+            <ToastContainer position="top-right" autoClose={3000} />            
             <Router>
-                <Routes>
+                <Routes>                    
                     <Route path="/" element={<h1>HOME</h1>} />
                     <Route path="/login" element={<Login />} />
-                    <Route path={`/${user?.role}/dashboard`} element={<h1>{user?.role} DASHBOARD</h1>} />
+                    <Route path="/dashboard/admin" element={<Dashboard />}>
+                        <Route index element={<Insights />} />
+                        <Route path={'student-list'} element={<StudentList />} />
+                        <Route path={'department-list'} element={<DepartmentList />} />
+                        <Route path={'hod-list'} element={<HODList />} />
+                        <Route path={'teacher-list'} element={<TeacherList />} />
+                    </Route>
                     <Route path="*" element={<h1>404 Not Found</h1>} />
                 </Routes>
             </Router>

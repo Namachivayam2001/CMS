@@ -4,36 +4,54 @@ import departmentService from '../../features/departmentService.ts';
 import type { RootState } from '../store.ts'; 
 
 interface Department {
-  _id: string;
-  name: string;
+    _id: string;
+    name: string;
+    code: string;
 }
 
 interface DepartmentState {
-  departments: Department[];
-  isLoading: boolean;
-  isError: boolean;
-  message: string;
+    departments: Department[];
+    isLoading: boolean;
+    isError: boolean;
+    message: string;
 }
 
 const initialState: DepartmentState = {
-  departments: [],
-  isLoading: false,
-  isError: false,
-  message: '',
+    departments: [],
+    isLoading: false,
+    isError: false,
+    message: '',
 };
+
+export interface CreateDepartmentResponse {
+    success: boolean
+    data: {
+        department: Department
+    }
+    message: string
+}
+
+export interface FetchAllDepartmentResponse {
+    success: boolean
+    data: {
+        departments: Department[]
+    }
+    message: string
+}
 
 // Fetch all departments
 export const fetchDepartments = createAsyncThunk<
-    Department[], // return type
-    void,         // argument type
+    FetchAllDepartmentResponse, // return type
+    void,         // argument type 
     { state: RootState; rejectValue: string } // thunkAPI type
-    >(
-    'departments/fetchAll',
-    async (_, thunkAPI) => {
+>('auth/department/fetchAll', async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const token = state.auth.user ? state.auth.user.token : null;
-            return (!token) ? thunkAPI.rejectWithValue('No token found, Please login') : await departmentService.getDepartments(token);
+            const token = state.auth.token;
+            console.log('print token in departmentSlice fetchDepartments method: ', token)
+            return (!token) 
+                ? thunkAPI.rejectWithValue('No token found, Please login') 
+                : await departmentService.getDepartments(token);
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -46,16 +64,17 @@ export const fetchDepartments = createAsyncThunk<
 
 // Create a new department
 export const createDepartment = createAsyncThunk<
-    Department,                        // return type
-    { name: string },                  // argument type
+    CreateDepartmentResponse,                        // return type
+    { name: string, code: string },                  // argument type
     { state: RootState; rejectValue: string }            // thunkAPI type
-    >(
-    'departments/create',
-    async (departmentData, thunkAPI) => {
+>('auth/department/create', async (departmentData, thunkAPI) => {
         try {
             const state = thunkAPI.getState()
-            const token = state.auth.user ? state.auth.user.token : null
-            return (!token) ? thunkAPI.rejectWithValue('No token found, Please login') : await departmentService.createDepartment(departmentData, token);
+            const token = state.auth.token;
+            console.log('print token in departmentSlice createDepartment method: ', token)
+            return (!token) 
+                ? thunkAPI.rejectWithValue('No token found, Please login') 
+                : await departmentService.createDepartment(departmentData, token);
         } catch (error: any) {
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
@@ -71,9 +90,9 @@ export const departmentSlice = createSlice({
     initialState,
     reducers: {
         reset: (state) => {
-        state.isLoading = false;
-        state.isError = false;
-        state.message = '';
+            state.isLoading = false;
+            state.isError = false;
+            state.message = '';
         },
     },
     extraReducers: (builder) => {
@@ -81,9 +100,9 @@ export const departmentSlice = createSlice({
             .addCase(fetchDepartments.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(fetchDepartments.fulfilled, (state, action: PayloadAction<Department[]>) => {
+            .addCase(fetchDepartments.fulfilled, (state, action: PayloadAction<FetchAllDepartmentResponse>) => {
                 state.isLoading = false;
-                state.departments = action.payload;
+                state.departments = action.payload.data.departments;
             })
             .addCase(fetchDepartments.rejected, (state, action) => {
                 state.isLoading = false;
@@ -93,9 +112,9 @@ export const departmentSlice = createSlice({
             .addCase(createDepartment.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(createDepartment.fulfilled, (state, action: PayloadAction<Department>) => {
+            .addCase(createDepartment.fulfilled, (state, action: PayloadAction<CreateDepartmentResponse>) => {
                 state.isLoading = false;
-                state.departments.push(action.payload);
+                state.departments.push(action.payload.data.department);
             })
             .addCase(createDepartment.rejected, (state, action) => {
                 state.isLoading = false;

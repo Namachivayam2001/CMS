@@ -46,38 +46,38 @@ function ColorSchemeToggle(props: IconButtonProps) {
 
     return (
         <IconButton
-        aria-label="toggle light/dark mode"
-        size="sm"
-        variant="outlined"
-        disabled={!mounted}
-        onClick={(event) => {
-            setMode(mode === 'light' ? 'dark' : 'light');
-            onClick?.(event);
-        }}
-        {...other}
+            aria-label="toggle light/dark mode"
+            size="sm"
+            variant="outlined"
+            disabled={!mounted}
+            onClick={(event) => {
+                setMode(mode === 'light' ? 'dark' : 'light');
+                onClick?.(event);
+            }}
+            {...other}
         >
-        {mode === 'light' ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
+            {mode === 'light' ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
         </IconButton>
     );
 }
 
 export default function Login() {
     const dispatch = useDispatch<AppDispatch>();
-    const { isLoading, isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+    const { isLoading, isAuthenticated, currentUser } = useSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
 
     // Check if user is already logged in on component mount
     useEffect(() => {
-        if (isAuthenticated && user?.role) {
+        if (isAuthenticated && currentUser?.role) {
             toast.info('You are already logged in. Redirecting to your dashboard.');
-            navigate(`/${user.role.toLowerCase()}/dashboard`);
+            navigate(`/dashboard/${currentUser.role.toLowerCase()}`);
         }
     }, []);
 
     const onSubmit = async (event: React.FormEvent<SignInFormElement>) => {
         event.preventDefault();
         try{
-            const formElements = event.currentTarget.elements;
+            const formElements = event.currentTarget.elements; 
             const credentials = {
                 username: formElements.username.value,
                 password: formElements.password.value,
@@ -86,7 +86,7 @@ export default function Login() {
             if(result?.success){
                 const userRole = result.data.user.role.toLowerCase();
                 toast.success(`Welcome, ${userRole}!`);
-                navigate(`/${userRole}/dashboard`);
+                navigate(`/dashboard/${userRole}`);
             }
         } catch (error) {
             console.error('Login submission error:', error);
@@ -107,18 +107,18 @@ export default function Login() {
         />
         <Box
             sx={(theme) => ({
-            width: { xs: '100%', md: '50vw' },
-            transition: 'width var(--Transition-duration)',
-            transitionDelay: 'calc(var(--Transition-duration) + 0.1s)',
-            position: 'relative',
-            zIndex: 1,
-            display: 'flex',
-            justifyContent: 'flex-end',
-            backdropFilter: 'blur(12px)',
-            backgroundColor: 'rgba(255 255 255 / 0.2)',
-            [theme.getColorSchemeSelector('dark')]: {
-                backgroundColor: 'rgba(19 19 24 / 0.4)',
-            },
+                width: { xs: '100%', md: '50vw' },
+                transition: 'width var(--Transition-duration)',
+                transitionDelay: 'calc(var(--Transition-duration) + 0.1s)',
+                position: 'relative',
+                zIndex: 1,
+                display: 'flex',
+                justifyContent: 'flex-end',
+                backdropFilter: 'blur(12px)',
+                backgroundColor: 'rgba(255 255 255 / 0.2)',
+                [theme.getColorSchemeSelector('dark')]: {
+                    backgroundColor: 'rgba(19 19 24 / 0.4)',
+                },
             })}
         >
             {/* Left Form Panel */}
@@ -149,18 +149,18 @@ export default function Login() {
             <Box
                 component="main"
                 sx={{
-                my: 'auto',
-                py: 2,
-                pb: 5,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                width: 400,
-                maxWidth: '100%',
-                mx: 'auto',
-                borderRadius: 'sm',
-                '& form': { display: 'flex', flexDirection: 'column', gap: 2 },
-                [`& .MuiFormLabel-asterisk`]: { visibility: 'hidden' },
+                    my: 'auto',
+                    py: 2,
+                    pb: 5,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2,
+                    width: 400,
+                    maxWidth: '100%',
+                    mx: 'auto',
+                    borderRadius: 'sm',
+                    '& form': { display: 'flex', flexDirection: 'column', gap: 2 },
+                    [`& .MuiFormLabel-asterisk`]: { visibility: 'hidden' },
                 }}
             >
                 <Stack sx={{ gap: 4, mb: 2 }}>
@@ -190,12 +190,12 @@ export default function Login() {
                 <Stack sx={{ gap: 4, mt: 2 }}>
                 <form onSubmit={(event: React.FormEvent<HTMLFormElement>) => onSubmit(event as React.FormEvent<SignInFormElement>)}>
                     <FormControl required>
-                    <FormLabel>Username</FormLabel>
-                    <Input type="text" name="username" />
+                        <FormLabel>Username</FormLabel>
+                        <Input type="text" name="username" />
                     </FormControl>
                     <FormControl required>
-                    <FormLabel>Password</FormLabel>
-                    <Input type="password" name="password" />
+                        <FormLabel>Password</FormLabel>
+                        <Input type="password" name="password" />
                     </FormControl>
                     <Stack sx={{ gap: 4, mt: 2 }}>
                     <Box

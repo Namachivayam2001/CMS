@@ -34,7 +34,7 @@ export const fetchTeachers = createAsyncThunk<
     >("teachers/fetchAll", async (_, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
-        const token = state.auth.user ? state.auth.user.token : null;
+        const token = state.auth.token;
         return (!token) 
             ? thunkAPI.rejectWithValue("No token found, Please login") 
             : await teacherService.getTeachers(token);
@@ -52,7 +52,7 @@ export const createTeacher = createAsyncThunk<
     >("teacher/create", async (teacherData, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
-        const token = state.auth.user ? state.auth.user.token : null;
+        const token = state.auth.token;
         return (!token) 
             ? thunkAPI.rejectWithValue("No token found, Please login") 
             : await teacherService.createTeacher(teacherData, token);

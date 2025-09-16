@@ -1,19 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import authService from '../../features/authService'
-import type { RootState } from '../store'
-
-// =====================
-// Types
-// =====================
-export interface User {
-    _id: string
-    username: string
-    role: 'Admin' | 'HOD' | 'Teacher' | 'Student'
-    refId: string // MongoDB ObjectId as string
-    lastLogin: string // ISO date string
-    token?: string // returned after login/registration
-}
+import type {User} from './userSlice'
 
 export interface LoginResponse {
     success: boolean
@@ -25,7 +13,8 @@ export interface LoginResponse {
 }
 
 interface AuthState {
-    user: User | null
+    currentUser: User | null
+    token: string | null
     isError: boolean
     isLoading: boolean
     isAuthenticated: boolean
@@ -35,49 +24,29 @@ interface AuthState {
 // =====================
 // Initial State
 // =====================
-const user: User | null = localStorage.getItem('user')
+const currentUser: User | null = localStorage.getItem('user')
     ? JSON.parse(localStorage.getItem('user') as string)
     : null
 
+const token: string | null = localStorage.getItem('token')
+    ? JSON.parse(localStorage.getItem('token') as string)
+    : null
+
 const initialState: AuthState = {
-    user,
+    currentUser,
+    token,
     isError: false,
     isLoading: false,
-    isAuthenticated: !!user,
+    isAuthenticated: !!currentUser,
     message: '',
 }
 
-// =====================
-// Async Thunks
-// =====================
-export const register = createAsyncThunk<
-    User,                    // return type (backend should return the full user object + token)
-    Partial<User>,           // input type (new user data)
-    { state: RootState; rejectValue: string }
-  >(
-    'auth/register',
-    async (userData, thunkAPI) => {
-        try {
-            const state = thunkAPI.getState()
-            const token = state.auth.user ? state.auth.user.token : null
-            return (!token) 
-                ? thunkAPI.rejectWithValue('No token found, Please login') 
-                : await authService.register(userData, token)
-        } catch (error: any) {
-            const message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString()
-            return thunkAPI.rejectWithValue(message)
-        }
-    }
-)
 
 export const login = createAsyncThunk<
     LoginResponse, // Return type
     { username: string; password: string }, // Input credentials
     { rejectValue: string }
-    >('auth/login', async (credentials, thunkAPI) => {
+>('auth/login', async (credentials, thunkAPI) => {
     try {
         const response = await authService.login(credentials);
         return response;
@@ -104,32 +73,21 @@ export const authSlice = createSlice({
             state.message = ''
         },
         logout: (state) => {
-            state.user = null
+            state.currentUser = null
             localStorage.removeItem('user')
+            localStorage.removeItem('token')
         },
     },
     extraReducers: (builder) => {
         builder
-        .addCase(register.pending, (state) => {
-            state.isLoading = true
-        })
-        .addCase(register.fulfilled, (state, action: PayloadAction<User>) => {
-            state.isLoading = false
-            state.user = action.payload
-            state.message = 'User registered successfully'
-        })
-        .addCase(register.rejected, (state, action) => {
-            state.isError = true
-            state.isLoading = false
-            state.message = action.payload as string
-        })
         .addCase(login.pending, (state) => {
             state.isLoading = true
         })
         .addCase(login.fulfilled, (state, action: PayloadAction<LoginResponse>) => {
             state.isLoading = false
             state.isAuthenticated = action.payload.success
-            state.user = action.payload.data.user
+            state.currentUser = action.payload.data.user
+            state.token = action.payload.data.token
             state.isError = false
             state.message = 'Login successful'
         })

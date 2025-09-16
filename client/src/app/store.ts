@@ -4,11 +4,13 @@ import departmentReducer from './slices/departmentSlice.ts'
 import studentReducer from './slices/studentSlice.ts'
 import teacherReducer from './slices/teacherSlice.ts'
 import hodReducer from './slices/hodSlice.ts'
+import userReducer from './slices/userSlice.ts'
 
 const store = configureStore({
     reducer: {
         auth: authReducer,
         department: departmentReducer,
+        user: userReducer,
         student: studentReducer,
         teacher: teacherReducer,
         hod: hodReducer,

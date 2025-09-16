@@ -31,10 +31,10 @@ export const fetchStudents = createAsyncThunk<
     Student[],
     void,
     { state: RootState; rejectValue: string }
-    >("students/fetchAll", async (_, thunkAPI) => {
+    >("student/fetchAll", async (_, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
-        const token = state.auth.user ? state.auth.user.token : null;
+        const token = state.auth.token;
         return (!token) 
             ? thunkAPI.rejectWithValue("No token found, Please login") 
             : await studentService.getStudents(token);
@@ -50,10 +50,10 @@ export const createStudent = createAsyncThunk<
     Student,
     Student,
     { state: RootState; rejectValue: string }
-    >("students/create", async (studentData, thunkAPI) => {
+    >("student/create", async (studentData, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
-        const token = state.auth.user ? state.auth.user.token : null;
+        const token = state.auth.token;
         return (!token) 
             ? thunkAPI.rejectWithValue("No token found, Please login") 
             : await studentService.createStudent(studentData, token);

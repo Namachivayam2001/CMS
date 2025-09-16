@@ -2,8 +2,8 @@ import axios from "axios";
 import type { Student } from "../app/slices/studentSlice";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_URL_FETCH_STUDENTS = `${API_BASE_URL}/fetch/students`;
-const API_URL_CREATE_STUDENT = `${API_BASE_URL}/create/student`;
+const API_URL_FETCH_STUDENTS = `${API_BASE_URL}/student/fetchAll`;
+const API_URL_CREATE_STUDENT = `${API_BASE_URL}/student/create`;
 
 const studentService = {
     getStudents: async (token: string): Promise<Student[]> => {

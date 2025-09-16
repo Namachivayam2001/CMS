@@ -2,6 +2,7 @@ require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
+const departmentRouts = require('./routes/departmentRouts')
 const connectDB  = require('./config/db');
 
 const PORT = process.env.PORT || 8080;
@@ -29,6 +30,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/department', departmentRouts);
 
 app.get('/api/health', async (req, res) => {
     res.status(200).json({

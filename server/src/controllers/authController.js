@@ -11,49 +11,6 @@ const generateToken = (userId) => {
     });
 };
 
-// POST /auth/register
-async function register(req, res) {
-    try {
-        const { username, password, role, refId } = req.body;
-
-        if (!username || !password || !role) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-
-        // Check if user already exists
-        const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.status(409).json({
-                message: 'Username already exists' 
-            });
-        }
-
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Create user
-        const userData = {
-            username: username.toLowerCase(),
-            password: hashedPassword,
-            role,
-        };
-
-        const user = new User(userData);
-        await user.save();
-
-        res.status(201).json({
-            _id: user._id,
-            username: user.username,
-            role: user.role,
-            refId: user.refId,
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
-    }
-}
-
 // POST /auth/login
 async function login(req, res) {
     try {
@@ -76,7 +33,7 @@ async function login(req, res) {
         }
 
         // Verify password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await user.matchPassword(password);
         if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
@@ -100,7 +57,7 @@ async function login(req, res) {
             message: 'Login successful',
             data: {
                 user: userResponse,
-                token
+                token: token
             }
         });
     } catch (err) {
@@ -113,4 +70,4 @@ async function login(req, res) {
     }
 }
 
-module.exports = { register, login };
+module.exports = { login };

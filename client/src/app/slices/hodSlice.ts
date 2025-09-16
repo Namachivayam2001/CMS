@@ -34,7 +34,7 @@ export const fetchHODs = createAsyncThunk<
     >("hods/fetchAll", async (_, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
-        const token = state.auth.user ? state.auth.user.token : null;
+        const token = state.auth.token;
         return !token
             ? thunkAPI.rejectWithValue("No token found, Please login")
             : await hodService.getHODs(token);
@@ -52,7 +52,7 @@ export const createHOD = createAsyncThunk<
     >("hods/create", async (hodData, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
-        const token = state.auth.user ? state.auth.user.token : null;
+        const token = state.auth.token;
         return !token
             ? thunkAPI.rejectWithValue("No token found, Please login")
             : await hodService.createHOD(hodData, token);
