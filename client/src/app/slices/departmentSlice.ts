@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import departmentService from '../../features/departmentService.ts';
 import type { RootState } from '../store.ts'; 
 
-interface Department {
+export interface Department {
     _id: string;
     name: string;
     code: string;

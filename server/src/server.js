@@ -2,7 +2,9 @@ require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
-const departmentRouts = require('./routes/departmentRouts')
+const departmentRouts = require('./routes/departmentRouts');
+const studentRuters = require('./routes/studentRoutes');
+const userRouters = require("./routes/userRoutes")
 const connectDB  = require('./config/db');
 
 const PORT = process.env.PORT || 8080;
@@ -31,6 +33,8 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/department', departmentRouts);
+app.use('/api/student', studentRuters);
+app.use('/api/user', userRouters)
 
 app.get('/api/health', async (req, res) => {
     res.status(200).json({

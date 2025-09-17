@@ -26,8 +26,6 @@ const authenticate = async (req, res, next) => {
     const user = await User.findById(decoded._id)
       .select('-password')
     //  .populate('refId', '-createdAt -updatedAt'); // populate refId without certain fields
-
-    console.log("user: ", user)
     
     if (!user) {
       return res.status(401).json({ 

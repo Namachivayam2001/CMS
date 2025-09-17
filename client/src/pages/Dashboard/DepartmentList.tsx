@@ -41,7 +41,7 @@ export default function DepartmentList() {
         }
         try{
             const result = await dispatch(createDepartment(formData)).unwrap();
-            console.log('createDepartment Respose: ', result)
+            
             if(result?.success){
                 const newDepartment = result.data.department.name;
                 toast.success(`${newDepartment} created successfully!`);

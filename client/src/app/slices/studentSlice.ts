@@ -7,7 +7,7 @@ export interface Student {
     _id?: string;
     name: string;
     rollNumber: string;
-    department: string; // Department ObjectId
+    department: string;
     contactDetails: { email: string; phone: string };
     dateOfJoining: string;
 }
@@ -26,9 +26,25 @@ const initialState: StudentState = {
     message: "",
 };
 
+export interface CreateStudentResponse {
+    success: boolean
+    data: {
+        student: Student
+    }
+    message: string
+}
+
+export interface FetchAllStudentResponse {
+    success: boolean
+    data: {
+        students: Student[]
+    }
+    message: string
+}
+
 // Fetch all students
 export const fetchStudents = createAsyncThunk<
-    Student[],
+    FetchAllStudentResponse,
     void,
     { state: RootState; rejectValue: string }
     >("student/fetchAll", async (_, thunkAPI) => {
@@ -47,7 +63,7 @@ export const fetchStudents = createAsyncThunk<
 
 // Create a student
 export const createStudent = createAsyncThunk<
-    Student,
+    CreateStudentResponse,
     Student,
     { state: RootState; rejectValue: string }
     >("student/create", async (studentData, thunkAPI) => {
@@ -79,9 +95,9 @@ export const studentSlice = createSlice({
         .addCase(fetchStudents.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(fetchStudents.fulfilled, (state, action: PayloadAction<Student[]>) => {
+        .addCase(fetchStudents.fulfilled, (state, action: PayloadAction<FetchAllStudentResponse>) => {
             state.isLoading = false;
-            state.students = action.payload;
+            state.students = action.payload.data.students;
         })
         .addCase(fetchStudents.rejected, (state, action) => {
             state.isLoading = false;
@@ -91,14 +107,14 @@ export const studentSlice = createSlice({
         .addCase(createStudent.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(createStudent.fulfilled, (state, action: PayloadAction<Student>) => {
+        .addCase(createStudent.fulfilled, (state, action: PayloadAction<CreateStudentResponse>) => {
             state.isLoading = false;
-            state.students.push(action.payload);
+            state.students.push(action.payload.data.student);
         })
         .addCase(createStudent.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.message = action.payload || "Failed to create student";
+            state.message = (action.payload as string) || "Failed to create student";
         });
     },
 });
