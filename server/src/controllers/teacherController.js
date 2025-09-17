@@ -120,7 +120,7 @@ const createTeacher = async (req, res) => {
             data: { 
                 teacher: teacher,
             },
-            message: `${teacher.name} and linked user created successfully`,
+            message: `Teacher and linked user created successfully`,
         });
     } catch (err) {
         console.error("Create Teacher Error:", err);

@@ -26,9 +26,25 @@ const initialState: HODState = {
     message: "",
 };
 
+export interface CreateHODResponse {
+    success: boolean
+    data: {
+        hod: HOD
+    }
+    message: string
+}
+
+export interface FetchAllHODResponse {
+    success: boolean
+    data: {
+        hods: HOD[]
+    }
+    message: string
+}
+
 // Fetch all HODs
 export const fetchHODs = createAsyncThunk<
-    HOD[],
+    FetchAllHODResponse,
     void,
     { state: RootState; rejectValue: string }
     >("hod/fetchAll", async (_, thunkAPI) => {
@@ -46,7 +62,7 @@ export const fetchHODs = createAsyncThunk<
 
 // Create HOD
 export const createHOD = createAsyncThunk<
-    HOD,
+    CreateHODResponse,
     HOD,
     { state: RootState; rejectValue: string }
     >("hods/create", async (hodData, thunkAPI) => {
@@ -77,26 +93,26 @@ export const hodSlice = createSlice({
         .addCase(fetchHODs.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(fetchHODs.fulfilled, (state, action: PayloadAction<HOD[]>) => {
+        .addCase(fetchHODs.fulfilled, (state, action: PayloadAction<FetchAllHODResponse>) => {
             state.isLoading = false;
-            state.hods = action.payload;
+            state.hods = action.payload.data.hods;
         })
         .addCase(fetchHODs.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.message = action.payload || "Failed to fetch HODs";
+            state.message = action.payload as string || "Failed to fetch HODs";
         })
         .addCase(createHOD.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(createHOD.fulfilled, (state, action: PayloadAction<HOD>) => {
+        .addCase(createHOD.fulfilled, (state, action: PayloadAction<CreateHODResponse>) => {
             state.isLoading = false;
-            state.hods.push(action.payload);
+            state.hods.push(action.payload.data.hod);
         })
         .addCase(createHOD.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.message = action.payload || "Failed to create HOD";
+            state.message = action.payload as string || "Failed to create HOD";
         });
     },
 });

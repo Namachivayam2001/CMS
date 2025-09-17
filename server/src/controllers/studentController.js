@@ -141,7 +141,7 @@ const createStudent = async (req, res) => {
             data: {
                 student: student,
             },
-            message: `${student.name} and linked user created successfully`,
+            message: `Student and linked user created successfully`,
         });
     } catch (err) {
         console.error("Create Student Error:", err);

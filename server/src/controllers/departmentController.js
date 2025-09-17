@@ -55,7 +55,7 @@ const createDepartment = async (req, res) => {
             data: {
                 department: department
             },
-            message: `${department.name} Department Created Successfully`
+            message: `Department Created Successfully`
         });
     } catch (err) {
         console.error("Create Department Error:", err);

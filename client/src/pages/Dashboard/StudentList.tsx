@@ -100,7 +100,6 @@ export default function StudentList() {
 
         try {
         const result = await dispatch(createStudent(formData)).unwrap();
-        console.log('createStudent Respose: ', result);
         if (result?.success) {
             const newStudent = result.data.student.name;
             toast.success(`${newStudent} created successfully`);
