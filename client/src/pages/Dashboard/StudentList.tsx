@@ -38,17 +38,15 @@ export default function StudentList() {
         isError && toast.error(message);
     }, [dispatch]);
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ): void => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = e.target;
         if (name === "email" || name === "phone") {
-        setFormData((prev) => ({
-            ...prev,
-            contactDetails: { ...prev.contactDetails, [name]: value },
-        }));
+            setFormData((prev) => ({
+                ...prev,
+                contactDetails: { ...prev.contactDetails, [name]: value },
+            }));
         } else {
-        setFormData((prev) => ({ ...prev, [name]: value }));
+            setFormData((prev) => ({ ...prev, [name]: value }));
         }
     };
 
@@ -120,6 +118,13 @@ export default function StudentList() {
         }
     };
 
+    const tableDataStyle = { 
+        maxWidth: "150px", 
+        whiteSpace: "nowrap", 
+        overflow: "hidden", 
+        textOverflow: "ellipsis" 
+    }
+
     return (
         <Box sx={{ p: 2 }}>
             <Typography level="h4" sx={{ mb: 2 }}>
@@ -133,10 +138,10 @@ export default function StudentList() {
                 component="form"
                 onSubmit={handleSubmit}
                 sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(7, 1fr)",
-                gap: 0.5,
-                mb: 2,
+                    display: "grid",
+                    gridTemplateColumns: "repeat(7, 1fr)",
+                    gap: 0.5,
+                    mb: 2,
                 }}
             >
                 <Input
@@ -222,54 +227,12 @@ export default function StudentList() {
                 {Array.isArray(students) && students.length > 0 ? (
                     students.map((student) => (
                     <tr key={student._id}>
-                        <td style={{ 
-                            maxWidth: "150px", 
-                            whiteSpace: "nowrap", 
-                            overflow: "hidden", 
-                            textOverflow: "ellipsis" 
-                        }}>
-                            {student.name}
-                        </td>
-                        <td style={{ 
-                            maxWidth: "150px", 
-                            whiteSpace: "nowrap", 
-                            overflow: "hidden", 
-                            textOverflow: "ellipsis" 
-                        }}>
-                            {student.rollNumber}
-                        </td>
-                        <td style={{ 
-                            maxWidth: "150px", 
-                            whiteSpace: "nowrap", 
-                            overflow: "hidden", 
-                            textOverflow: "ellipsis" 
-                        }}>
-                            {departments.find((dept) => dept._id === student.department)?.code}
-                        </td>
-                        <td style={{ 
-                            maxWidth: "150px", 
-                            whiteSpace: "nowrap", 
-                            overflow: "hidden", 
-                            textOverflow: "ellipsis" 
-                        }}>
-                            {student.contactDetails.email}
-                        </td>
-                        <td style={{ 
-                            maxWidth: "150px", 
-                            whiteSpace: "nowrap", 
-                            overflow: "hidden", 
-                            textOverflow: "ellipsis" 
-                        }}>
-                            {student.contactDetails.phone}
-                        </td>
-                        <td style={{ 
-                            maxWidth: "150px", 
-                            whiteSpace: "nowrap", 
-                            overflow: "hidden", 
-                            textOverflow: "ellipsis" 
-                        }}>
-                            {new Date(student.dateOfJoining).toLocaleDateString()}
-                        </td>
+                        <td style={tableDataStyle}>{student.name}</td>
+                        <td style={tableDataStyle}>{student.rollNumber}</td>
+                        <td style={tableDataStyle}>{departments.find((dept) => dept._id === student.department)?.code}</td>
+                        <td style={tableDataStyle}>{student.contactDetails.email}</td>
+                        <td style={tableDataStyle}>{student.contactDetails.phone}</td>
+                        <td style={tableDataStyle}>{new Date(student.dateOfJoining).toLocaleDateString()}</td>
                         <td>–</td>
                     </tr>
                     ))

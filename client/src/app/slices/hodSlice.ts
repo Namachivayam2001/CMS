@@ -31,7 +31,7 @@ export const fetchHODs = createAsyncThunk<
     HOD[],
     void,
     { state: RootState; rejectValue: string }
-    >("hods/fetchAll", async (_, thunkAPI) => {
+    >("hod/fetchAll", async (_, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
         const token = state.auth.token;

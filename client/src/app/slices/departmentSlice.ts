@@ -44,7 +44,7 @@ export const fetchDepartments = createAsyncThunk<
     FetchAllDepartmentResponse, // return type
     void,         // argument type 
     { state: RootState; rejectValue: string } // thunkAPI type
->('auth/department/fetchAll', async (_, thunkAPI) => {
+>('department/fetchAll', async (_, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
             const token = state.auth.token;

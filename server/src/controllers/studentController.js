@@ -32,8 +32,7 @@ const getStudents = async (req, res) => {
         //         message: "Students Fetched Successfully",
         //     });
         // } else {
-            const students = await Student.find()
-                .sort({ createdAt: -1 });
+            const students = await Student.find().sort({ createdAt: -1 });
 
             res.status(200).json({
                 success: true,
@@ -43,7 +42,6 @@ const getStudents = async (req, res) => {
                 message: "Students Fetched Successfully",
             });
         //}
-
         
     } catch (err) {
         console.error("Get Students Error:", err);

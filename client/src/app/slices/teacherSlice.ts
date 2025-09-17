@@ -26,12 +26,28 @@ const initialState: TeacherState = {
     message: "",
 };
 
+export interface CreateTeacherResponse {
+    success: boolean
+    data: {
+        teacher: Teacher
+    }
+    message: string
+}
+
+export interface FetchAllTeacherResponse {
+    success: boolean
+    data: {
+        teachers: Teacher[]
+    }
+    message: string
+}
+
 // Fetch all teachers
 export const fetchTeachers = createAsyncThunk<
-    Teacher[],
+    FetchAllTeacherResponse,
     void,
     { state: RootState; rejectValue: string }
-    >("teachers/fetchAll", async (_, thunkAPI) => {
+    >("teacher/fetchAll", async (_, thunkAPI) => {
     try {
         const state = thunkAPI.getState();
         const token = state.auth.token;
@@ -46,7 +62,7 @@ export const fetchTeachers = createAsyncThunk<
 
 // Create teacher
 export const createTeacher = createAsyncThunk<
-    Teacher,
+    CreateTeacherResponse,
     Teacher,
     { state: RootState; rejectValue: string }
     >("teacher/create", async (teacherData, thunkAPI) => {
@@ -67,9 +83,9 @@ export const teacherSlice = createSlice({
     initialState,
     reducers: {
         reset: (state) => {
-        state.isLoading = false;
-        state.isError = false;
-        state.message = "";
+            state.isLoading = false;
+            state.isError = false;
+            state.message = "";
         },
     },
     extraReducers: (builder) => {
@@ -77,26 +93,26 @@ export const teacherSlice = createSlice({
         .addCase(fetchTeachers.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(fetchTeachers.fulfilled, (state, action: PayloadAction<Teacher[]>) => {
+        .addCase(fetchTeachers.fulfilled, (state, action: PayloadAction<FetchAllTeacherResponse>) => {
             state.isLoading = false;
-            state.teachers = action.payload;
+            state.teachers = action.payload.data.teachers;
         })
         .addCase(fetchTeachers.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.message = action.payload || "Failed to fetch teachers";
+            state.message = action.payload as string || "Failed to fetch teachers";
         })
         .addCase(createTeacher.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(createTeacher.fulfilled, (state, action: PayloadAction<Teacher>) => {
+        .addCase(createTeacher.fulfilled, (state, action: PayloadAction<CreateTeacherResponse>) => {
             state.isLoading = false;
-            state.teachers.push(action.payload);
+            state.teachers.push(action.payload.data.teacher);
         })
         .addCase(createTeacher.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.message = action.payload || "Failed to create teacher";
+            state.message = action.payload as string || "Failed to create teacher";
         });
     },
 });
