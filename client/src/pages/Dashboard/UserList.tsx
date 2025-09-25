@@ -7,12 +7,11 @@ import {
   Table,
   Box,
   Typography,
-  CircularProgress,
 } from "@mui/joy";
 
 export default function UserList() {
   const dispatch = useDispatch<AppDispatch>();
-  const { users, isLoading, isError, message } = useSelector((state: RootState) => state.user);
+  const { users, isError, message } = useSelector((state: RootState) => state.user);
 
   React.useEffect(() => {
     dispatch(fetchUsers());
@@ -24,8 +23,6 @@ export default function UserList() {
       <Typography level="h4" sx={{ mb: 2 }}>
         User List
       </Typography>
-
-      {isLoading && <CircularProgress />}
 
       <Table 
         borderAxis="bothBetween" 

@@ -7,6 +7,9 @@ const studentRuters = require('./routes/studentRoutes');
 const userRouters = require("./routes/userRoutes");
 const teacherRouters = require("./routes/teacherRoutes");
 const hodReducers = require('./routes/hodRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
+const courseRoutes = require('./routes/courseRoutes');
+const enrollmentRoutes = require('./routes/enrollmentRoutes');
 const connectDB  = require('./config/db');
 
 const PORT = process.env.PORT || 8080;
@@ -39,6 +42,11 @@ app.use('/api/student', studentRuters);
 app.use('/api/user', userRouters);
 app.use('/api/teacher', teacherRouters);
 app.use('/api/hod', hodReducers);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/course', courseRoutes);
+app.use('/api/enrollment', enrollmentRoutes);
+
+// Health check endpoint
 
 app.get('/api/health', async (req, res) => {
     res.status(200).json({

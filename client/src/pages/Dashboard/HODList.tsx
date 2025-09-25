@@ -110,7 +110,7 @@ export default function HODList() {
             const result = await dispatch(createHOD(formData)).unwrap();
             if (result?.success) {
                 const newHOD = result.data.hod.name;
-                toast.success(`${newHOD} created successfully`);
+                toast.success(`HOD ${newHOD} created successfully`);
             }
 
             // Reset form
@@ -136,12 +136,31 @@ export default function HODList() {
 
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ position: "relative", p: 2 }}>
+        {/* Overlay only inside component */}
+        {(isLoading ) && (
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "80vh",
+                    backgroundColor: "rgba(255, 255, 255, 0.9)", // dim background
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 10, // floats above table & form
+                }}
+            >
+                <CircularProgress size="lg" color="neutral" />
+            </Box>
+        )}
+
+        {/* form + table content here */}
         <Typography level="h4" sx={{ mb: 2 }}>
             HOD List
         </Typography>
-
-        {isLoading && <CircularProgress />}
 
         {/* Form with 6 columns + button */}
         <Box
@@ -177,7 +196,7 @@ export default function HODList() {
                 onChange={((_, value) =>
                     setFormData((prev) => ({ ...prev, department: value || "" }))
                 )}
-                placeholder={deptLoading ? "Loading..." : "Select Department"}
+                placeholder={deptLoading ? "Loading..." : "Department"}
                 required
                 size="sm"
                 sx={{
@@ -237,7 +256,7 @@ export default function HODList() {
                 <tr key={hod._id}>
                     <td style={tableDataStyle}>{hod.name}</td>
                     <td style={tableDataStyle}>{hod.employeeId}</td>
-                    <td style={tableDataStyle}>{hod.department}</td>
+                    <td style={tableDataStyle}>{departments.find((dept) => dept._id === hod.department)?.code}</td>
                     <td style={tableDataStyle}>{hod.contactDetails.email}</td>
                     <td style={tableDataStyle}>{hod.contactDetails.phone}</td>
                     <td style={tableDataStyle}>{new Date(hod.dateOfJoining).toLocaleDateString()}</td>

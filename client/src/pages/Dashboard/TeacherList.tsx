@@ -112,7 +112,7 @@ export default function TeacherList() {
 
             if (result?.success) {
                 const newTeacherName = result?.data?.teacher?.name;
-                toast.success(`${newTeacherName} created successfully`);
+                toast.success(`Teacher ${newTeacherName} created successfully`);
             }
 
             // Reset form
@@ -137,7 +137,26 @@ export default function TeacherList() {
     }
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{position: "relative", p: 2 }}>
+        {/* Overlay only inside component */}
+        {(isLoading ) && (
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "80vh",
+                    backgroundColor: "rgba(255, 255, 255, 0.9)", // dim background
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 10, // floats above table & form
+                }}
+            >
+            <CircularProgress size="lg" color="neutral" />
+            </Box>
+        )}
         <Typography level="h4" sx={{ mb: 2 }}>
             Teacher List
         </Typography>
@@ -239,7 +258,7 @@ export default function TeacherList() {
                 <tr key={teacher._id}>
                     <td style={tableDataStyle}>{teacher.name}</td>
                     <td style={tableDataStyle}>{teacher.employeeId}</td>
-                    <td style={tableDataStyle}>{teacher.department}</td>
+                    <td style={tableDataStyle}>{departments.find((dept) => dept._id === teacher.department)?.code}</td>
                     <td style={tableDataStyle}>{teacher.contactDetails.email}</td>
                     <td style={tableDataStyle}>{teacher.contactDetails.phone}</td>
                     <td style={tableDataStyle}>{new Date(teacher.dateOfJoining).toLocaleDateString()}</td>

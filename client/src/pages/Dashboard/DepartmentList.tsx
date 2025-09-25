@@ -44,7 +44,7 @@ export default function DepartmentList() {
             
             if(result?.success){
                 const newDepartment = result.data.department.name;
-                toast.success(`${newDepartment} created successfully!`);
+                toast.success(`Department ${newDepartment} created successfully!`);
             }
             setFormData({ name: "", code: "" });
         } catch (error) {
@@ -55,12 +55,29 @@ export default function DepartmentList() {
 
 
     return (
-        <Box sx={{ p: 2}}>
+        <Box sx={{position: "relative", p: 2}}>
+        {/* Overlay only inside component */}
+        {(isLoading ) && (
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "80vh",
+                    backgroundColor: "rgba(255, 255, 255, 0.9)", // dim background
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 10, // floats above table & form
+                }}
+            >
+            <CircularProgress size="lg" color="neutral" />
+            </Box>
+        )}
         <Typography level="h4" sx={{ mb: 2 }}>
             Department List
         </Typography>
-
-        {isLoading && <CircularProgress />}
 
         {/* Form aligned above the table */}
         <Box
