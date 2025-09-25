@@ -16,6 +16,7 @@ export default function SidebarItems({ Role, onItemClick, }: { Role?: string; on
             { name: "Manage HODs", path: "/dashboard/admin/hod-list" },
             { name: "Manage Departments", path: "/dashboard/admin/department-list" },
             { name: "Manage Courses", path: "/dashboard/admin/course-list" },
+            { name: "Manage Enrollments", path: "/dashboard/admin/enrollment-list" },
             { name: "Fees Management", path: "/dashboard/admin/fees" },
             { name: "Attendance", path: "/dashboard/admin/attendance" },
             { name: "Exams", path: "/dashboard/admin/exams" },

@@ -11,6 +11,7 @@ import DepartmentList from './pages/Dashboard/DepartmentList';
 import HODList from './pages/Dashboard/HODList';
 import TeacherList from './pages/Dashboard/TeacherList';
 import CourseList from './pages/Dashboard/CourseList';
+import EnrollmentList from './pages/Dashboard/EnrollmentList';
 
 // ✅ Define theme without initialColorScheme
 const customTheme = extendTheme({
@@ -36,6 +37,7 @@ function App() {
                         <Route path={'hod-list'} element={<HODList />} />
                         <Route path={'teacher-list'} element={<TeacherList />} />
                         <Route path={'course-list'} element={<CourseList />} />
+                        <Route path={'enrollment-list'} element={<EnrollmentList />} />
                     </Route>
                     <Route path="*" element={<h1>404 Not Found</h1>} />
                 </Routes>

@@ -18,7 +18,7 @@ import {
 
 export default function CourseList() {
     const dispatch = useDispatch<AppDispatch>();
-    const { courses, isLoading, isError, message } = useSelector(
+    const { courses, isLoading } = useSelector(
         (state: RootState) => state.course
     );
     const { departments, isLoading: deptLoading } = useSelector(
@@ -41,7 +41,6 @@ export default function CourseList() {
         dispatch(fetchCourses());
         dispatch(fetchDepartments());
         dispatch(fetchTeachers());
-        if (isError) toast.error(message);
     }, [dispatch]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

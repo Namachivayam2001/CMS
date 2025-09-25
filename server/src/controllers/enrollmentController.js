@@ -7,10 +7,7 @@ const Course = require("../models/Course");
 // @access Admin, HOD, Teacher
 const getEnrollments = async (req, res) => {
     try {
-        const enrollments = await Enrollment.find()
-            .populate("student", "name rollNumber")
-            .populate("course", "name code")
-            .sort({ createdAt: -1 });
+        const enrollments = await Enrollment.find().sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,

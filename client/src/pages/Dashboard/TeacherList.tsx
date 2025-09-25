@@ -197,7 +197,7 @@ export default function TeacherList() {
                 onChange={((_, value) =>
                     setFormData((prev) => ({ ...prev, department: value || "" }))
                 )}
-                placeholder={deptLoading ? "Loading..." : "Select Department"}
+                placeholder={deptLoading ? "Loading..." : "Department"}
                 required
                 size="sm"
                 sx={{

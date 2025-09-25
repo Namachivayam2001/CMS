@@ -99,18 +99,18 @@ export default function StudentList() {
         }
 
         try {
-        const result = await dispatch(createStudent(formData)).unwrap();
-        if (result?.success) {
-            const newStudent = result.data.student.name;
-            toast.success(`Student ${newStudent} created successfully`);
-        }
-        setFormData({
-            name: "",
-            rollNumber: "",
-            department: "",
-            contactDetails: { email: "", phone: "" },
-            dateOfJoining: "",
-        });
+            const result = await dispatch(createStudent(formData)).unwrap();
+            if (result?.success) {
+                const newStudent = result.data.student.name;
+                toast.success(`Student ${newStudent} created successfully`);
+            }
+            setFormData({
+                name: "",
+                rollNumber: "",
+                department: "",
+                contactDetails: { email: "", phone: "" },
+                dateOfJoining: "",
+            });
         } catch (error) {
             console.error('Create Student submission error:', error);
             toast.error(error as string || 'Create Student failed. Please try again.');
@@ -183,7 +183,7 @@ export default function StudentList() {
                     onChange={(_, value) =>
                         setFormData((prev) => ({ ...prev, department: value || "" }))
                     }
-                    placeholder={deptLoading ? "Loading..." : "Select Department"}
+                    placeholder={deptLoading ? "Loading..." : "Department"}
                     required
                     size="sm"
                     sx={{
