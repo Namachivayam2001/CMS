@@ -10,10 +10,9 @@ const courseService = {
         courseData: {
             name: string;
             code: string;
-            department: string;
+            class: string;
             teacher: string;
-            semester: number;
-            credits: number;
+            credits: number; 
         },
         token: string
     ): Promise<CreateCourseResponse> => {

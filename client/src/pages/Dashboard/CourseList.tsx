@@ -9,38 +9,46 @@ import {
     Table,
     Box,
     Input,
-    Button,
+    Button, 
     Typography,
     CircularProgress,
     Select,
     Option,
 } from '@mui/joy';
+import { fetchClasses } from '../../app/slices/classSlice';
+import { fetchAcademicYears } from '../../app/slices/academicYearSlice';
 
 export default function CourseList() {
     const dispatch = useDispatch<AppDispatch>();
     const { courses, isLoading } = useSelector(
         (state: RootState) => state.course
     );
-    const { departments, isLoading: deptLoading } = useSelector(
-        (state: RootState) => state.department
-    ) as RootState['department'];
+    
     const { teachers, isLoading: teacherLoading } = useSelector(
         (state: RootState) => state.teacher
     ) as RootState['teacher'];
 
+    const { classes, isLoading: classLoading } = useSelector(
+        (state: RootState) => state.class
+    ) as RootState['class'];
+
+    const { departments } = useSelector((state: RootState) => state.department);
+    const { academicYears } = useSelector((state: RootState) => state.academicYear);
+    
     const [formData, setFormData] = React.useState({
         name: '',
         code: '',
-        department: '',
+        class: '',
         teacher: '',
-        semester: 1,
         credits: 3,
     });
 
     React.useEffect(() => {
         dispatch(fetchCourses());
-        dispatch(fetchDepartments());
         dispatch(fetchTeachers());
+        dispatch(fetchClasses());
+        dispatch(fetchDepartments());
+        dispatch(fetchAcademicYears());
     }, [dispatch]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -50,7 +58,7 @@ export default function CourseList() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.name || !formData.code || !formData.department || !formData.teacher) {
+        if (!formData.name || !formData.code || !formData.class || !formData.teacher) {
             toast.error('Please fill in all fields');
             return;
         }
@@ -59,18 +67,12 @@ export default function CourseList() {
             return;
         }
 
-        if (!formData.department) {
-            toast.error("Please select a department");
+        if (!formData.class) {
+            toast.error("Please select a Class");
             return;
         }
         if (!formData.teacher) {
             toast.error("Please select a teacher");
-            return;
-        }
-
-        // Semester validation
-        if (formData.semester < 1 || formData.semester > 12) {
-            toast.error("Semester must be between 1 and 12");
             return;
         }
 
@@ -83,7 +85,7 @@ export default function CourseList() {
             const result = await dispatch(createCourse(formData)).unwrap();
             if (result?.success) {
                 toast.success(`Course ${result.data.course.name} created successfully!`);
-                setFormData({ name: '', code: '', department: '', teacher: '', semester: 1, credits: 3 });
+                setFormData({ name: '', code: '', class: '', teacher: '', credits: 3 });
             }
         } catch (error) {
             console.error("Create Course submission error:", error);
@@ -127,7 +129,7 @@ export default function CourseList() {
             onSubmit={handleSubmit}
             sx={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(7, 1fr)',
+                gridTemplateColumns: 'repeat(6, 1fr)',
                 gap: 0.5,
                 mb: 2,
             }}
@@ -151,23 +153,27 @@ export default function CourseList() {
                 fullWidth
             />
             <Select
-                name="department"
-                value={formData.department}
+                name="class"
+                value={formData.class}
                 onChange={((_, value) => 
-                    setFormData((prev) => ({ ...prev, department: value || '' }))
+                    setFormData((prev) => ({ ...prev, class: value || '' }))
                 )}
-                placeholder={(deptLoading ? "Loading..." : "Department")}
+                placeholder={(classLoading ? "Loading..." : "Class")}
                 required
                 size="sm"
                 sx={{
                     "--Select-placeholderColor": "#bfc5cb", // gray-400
                 }}
             >
-                {departments.map((d) => (
-                    <Option key={d._id} value={d._id}>
-                        {d.code}
-                    </Option>
-                ))}
+                {
+                    Array.isArray(classes) && classes.length > 0
+                    ? classes.map((c) => (
+                        <Option key={c._id} value={c._id}>
+                            {departments.find((dept) => dept._id === c.department)?.code} - ({academicYears.find((year) => year._id === c.academicYear)?.year}) - Sec {c.section}
+                        </Option>
+                    ))
+                    : <Option value="">Class</Option>
+                }
             </Select>
             <Select
                 name="teacher"
@@ -182,10 +188,10 @@ export default function CourseList() {
                     "--Select-placeholderColor": "#bfc5cb", // gray-400
                 }}
             >
-                {formData.department
+                {classes.find((c) => c._id === formData.class)?.department
                 ? (
                     () => {
-                        const filtered = teachers.filter((t) => t.department === formData.department);
+                        const filtered = teachers.filter((t) => t.department === classes.find((c) => c._id === formData.class)?.department);
                         return filtered.length > 0 ? (
                             filtered.map((t) => (
                                 <Option key={t._id} value={t._id}>
@@ -200,15 +206,6 @@ export default function CourseList() {
                     <Option value="">Teacher</Option>
                 )}
             </Select>
-            <Input
-                placeholder="Semester"
-                name="semester"
-                type="number"
-                value={formData.semester}
-                onChange={handleChange}
-                size="sm"
-                required
-            />
             <Input
                 placeholder="Credits"
                 name="credits"
@@ -228,9 +225,8 @@ export default function CourseList() {
                 <tr>
                     <th>Name</th>
                     <th>Code</th>
-                    <th>Department</th>
+                    <th>Class</th>
                     <th>Teacher</th>
-                    <th>Semester</th>
                     <th>Credits</th>
                     <th>Actions</th>
                 </tr>
@@ -241,9 +237,8 @@ export default function CourseList() {
                         <tr key={c._id}>
                             <td style={tableDataStyle}>{c.name}</td>
                             <td style={tableDataStyle}>{c.code}</td>
-                            <td style={tableDataStyle}>{departments.find((dept) => dept._id === c.department)?.code}</td>
-                            <td style={tableDataStyle}>{teachers.find((t) => t._id === c.teacher)?.name}</td>
-                            <td style={tableDataStyle}>{c.semester}</td>
+                            <td style={tableDataStyle}>{departments.find((dept) => dept._id === classes.find((classItem) => classItem._id === c.class)?.department)?.code} - ({academicYears.find((year) => year._id === classes.find((classItem) => classItem._id === c.class)?.academicYear)?.year}) - Sec {classes.find((classItem) => classItem._id === c.class)?.section}</td>
+                            <td style={tableDataStyle}>{teachers.find((t) => t._id === c.teacher)?.name}</td> 
                             <td style={tableDataStyle}>{c.credits}</td>
                             <td style={tableDataStyle}>–</td>
                         </tr>

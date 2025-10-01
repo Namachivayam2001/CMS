@@ -2,14 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import courseService from '../../features/courseService';
 import type { RootState } from '../store';
-
+ 
 export interface Course {
     _id: string;
     name: string;
     code: string;
-    semester: number;
     credits: number;
-    department: string;
+    class: string;
     teacher: string;
 }
 
@@ -66,9 +65,8 @@ export const createCourse = createAsyncThunk<
     {
         name: string;
         code: string;
-        department: string;
+        class: string;
         teacher: string;
-        semester: number;
         credits: number;
     },
     { state: RootState; rejectValue: string }

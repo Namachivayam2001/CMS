@@ -7,7 +7,7 @@ export interface Teacher {
     _id?: string;
     name: string;
     employeeId: string;
-    department: string; // Department ObjectId
+    department: string;
     contactDetails: { email: string; phone: string };
     dateOfJoining: string;
 }

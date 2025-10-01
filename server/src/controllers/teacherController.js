@@ -1,24 +1,21 @@
 const Teacher = require("../models/Teacher");
-const User = require("../models/User");
 
 // @desc Fetch all teachers
 // @route GET /api/teacher/fetchAll
 const getTeachers = async (req, res) => {
   try {
-    const teachers = await Teacher.find().sort({ createdAt: -1 });
+    const teachers = await Teacher.find()
+        .sort({ createdAt: -1 });
 
     res.status(200).json({
         success: true,
-        data: { 
-            teachers: teachers,
-        },
+        data: { teachers: teachers},
         message: "Teachers Fetched Successfully",
     });
     } catch (err) {
         console.error("Get Teachers Error:", err);
         res.status(500).json({
             success: false,
-            data: null,
             message: "Server error",
         });
     }
@@ -30,14 +27,10 @@ const createTeacher = async (req, res) => {
     try {
         const { name, employeeId, department, contactDetails, dateOfJoining } = req.body;
 
-        const username = employeeId; // Use employeeId as username
-        const password = `${contactDetails.email}`; // Default password
-
         // Basic required field validation
         if (!name || !employeeId || !department || !contactDetails || !dateOfJoining) {
             return res.status(400).json({
                 success: false,
-                data: null,
                 message: "All fields are required",
             });
         }
@@ -81,18 +74,7 @@ const createTeacher = async (req, res) => {
         if (isTeacherExists) {
             return res.status(400).json({
                 success: false,
-                data: null,
                 message: "Teacher with this Employee ID or Email already exists",
-            });
-        }
-
-        // Check duplicate user
-        const isUserExists = await User.findOne({ username });
-        if (isUserExists) {
-            return res.status(400).json({
-                success: false,
-                data: null,
-                message: "User with this Employee ID/User Name already exists",
             });
         }
 
@@ -105,19 +87,9 @@ const createTeacher = async (req, res) => {
             dateOfJoining,
         });
 
-        // Create linked user
-        const user = new User({
-            username,
-            password, // will be hashed in pre('save')
-            role: "Teacher",
-            refId: teacher._id,
-        });
-
-        await user.save();
-
         res.status(201).json({
             success: true,
-            data: { 
+            data: {
                 teacher: teacher,
             },
             message: `Teacher and linked user created successfully`,
@@ -125,14 +97,67 @@ const createTeacher = async (req, res) => {
     } catch (err) {
         console.error("Create Teacher Error:", err);
         res.status(500).json({
-        success: false,
-        data: null,
-        message: "Server error",
+            success: false, 
+            message: "Server error",
         });
     }
 };
 
+// @desc Update teacher
+// @route PUT /api/teacher/:id
+const updateTeacher = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body;
+
+        const teacher = await Teacher.findOneAndUpdate({ _id: id }, updates, {
+            new: true,
+            runValidators: true,
+        }).populate("department", "name code");
+
+        if (!teacher) {
+            return res.status(404).json({ success: false, message: "Teacher not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Teacher and linked user updated successfully",
+        });
+    } catch (err) {
+        console.error("Update Teacher Error:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+// @desc Delete teacher
+// @route DELETE /api/teacher/:id
+const deleteTeacher = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const teacher = await Teacher.findOneAndDelete({ _id: id }).populate(
+            "department",
+            "name code"
+        );
+
+        if (!teacher) {
+            return res.status(404).json({ success: false, message: "Teacher not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Teacher and linked user deleted successfully",
+        });
+    } catch (err) {
+        console.error("Delete Teacher Error:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+
 module.exports = {
   getTeachers,
   createTeacher,
+  updateTeacher,
+  deleteTeacher,
 };

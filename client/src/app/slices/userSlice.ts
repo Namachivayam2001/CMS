@@ -5,6 +5,7 @@ import userService from "../../features/userService";
 
 export interface User {
     _id: string;
+    name: string;
     username: string;
     role: "Admin" | "HOD" | "Teacher" | "Student";
     refId: string;

@@ -7,7 +7,7 @@ export interface Student {
     _id?: string;
     name: string;
     rollNumber: string;
-    department: string;
+    class: string;
     contactDetails: { email: string; phone: string };
     dateOfJoining: string;
 }

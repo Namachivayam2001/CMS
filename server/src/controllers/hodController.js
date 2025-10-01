@@ -1,5 +1,4 @@
 const HOD = require("../models/HOD");
-const User = require("../models/User");
 
 // @desc Fetch all HODs
 // @route GET /api/hod/fetchAll
@@ -15,8 +14,7 @@ const getHODs = async (req, res) => {
     } catch (err) {
         console.error("Get HODs Error:", err);
         res.status(500).json({
-            success: false,
-            data: null,
+            success: false, 
             message: "Server error",
         });
     }
@@ -27,17 +25,13 @@ const getHODs = async (req, res) => {
 const createHOD = async (req, res) => {
     try {
         const { name, employeeId, department, contactDetails, dateOfJoining } = req.body;
-
-        const username = employeeId; // login username
-        const password = `${contactDetails.email}`; // default password
-
+ 
         // Validation
         if (!name || !employeeId || !department || !contactDetails || !dateOfJoining) {
-        return res.status(400).json({
-            success: false,
-            data: null,
-            message: "All fields are required",
-        });
+            return res.status(400).json({
+                success: false, 
+                message: "All fields are required",
+            });
         }
 
         if (name.trim().length < 3) {
@@ -86,21 +80,10 @@ const createHOD = async (req, res) => {
 
         if (isHODExists) {
             return res.status(400).json({
-                success: false,
-                data: null,
+                success: false, 
                 message: "HOD with this Employee ID, Email, or Department already exists",
             });
-        }
-
-        // Check duplicate user
-        const isUserExists = await User.findOne({ username });
-        if (isUserExists) {
-            return res.status(400).json({
-                success: false,
-                data: null,
-                message: "User with this Employee ID/User Name already exists",
-            });
-        }
+        } 
 
         // Create HOD
         const hod = await HOD.create({
@@ -109,17 +92,7 @@ const createHOD = async (req, res) => {
             department,
             contactDetails,
             dateOfJoining,
-        });
-
-        // Create linked user
-        const user = new User({
-            username,
-            password,
-            role: "HOD",
-            refId: hod._id,
-        });
-
-        await user.save();
+        }); 
 
         res.status(201).json({
             success: true,
@@ -136,7 +109,57 @@ const createHOD = async (req, res) => {
     }
 };
 
+// @desc Update HOD
+// @route PUT /api/hod/:id
+const updateHOD = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body;
+
+        const hod = await HOD.findOneAndUpdate({ _id: id }, updates, {
+            new: true,
+            runValidators: true,
+        })
+
+        if (!hod) {
+            return res.status(404).json({ success: false, message: "HOD not found" });
+        }
+
+        res.status(200).json({
+            success: true, 
+            message: "HOD and linked user updated successfully",
+        });
+    } catch (err) {
+        console.error("Update HOD Error:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+// @desc Delete HOD
+// @route DELETE /api/hod/:id
+const deleteHOD = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const hod = await HOD.findOneAndDelete({ _id: id });
+
+        if (!hod) {
+            return res.status(404).json({ success: false, message: "HOD not found" });
+        }
+
+        res.status(200).json({
+            success: true, 
+            message: "HOD and linked user deleted successfully",
+        });
+    } catch (err) {
+        console.error("Delete HOD Error:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
 module.exports = {
   getHODs,
   createHOD,
+  updateHOD,
+  deleteHOD,
 };

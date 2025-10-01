@@ -11,7 +11,9 @@ import DepartmentList from './pages/Dashboard/DepartmentList';
 import HODList from './pages/Dashboard/HODList';
 import TeacherList from './pages/Dashboard/TeacherList';
 import CourseList from './pages/Dashboard/CourseList';
-import EnrollmentList from './pages/Dashboard/EnrollmentList';
+import PutAttendance from './components/PutAttendance';
+import ClassList from './pages/Dashboard/ClassList';
+import AcademicYearList from './pages/Dashboard/AcademicYearList';
 
 // ✅ Define theme without initialColorScheme
 const customTheme = extendTheme({
@@ -32,12 +34,14 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/dashboard/admin" element={<Dashboard />}>
                         <Route index element={<Insights />} />
+                        <Route path={'academic-year-list'} element={<AcademicYearList />} />
+                        <Route path={'class-list'} element={<ClassList />} />
                         <Route path={'student-list'} element={<StudentList />} />
                         <Route path={'department-list'} element={<DepartmentList />} />
                         <Route path={'hod-list'} element={<HODList />} />
                         <Route path={'teacher-list'} element={<TeacherList />} />
                         <Route path={'course-list'} element={<CourseList />} />
-                        <Route path={'enrollment-list'} element={<EnrollmentList />} />
+                        <Route path={'attendance'} element={<PutAttendance />} />
                     </Route>
                     <Route path="*" element={<h1>404 Not Found</h1>} />
                 </Routes>

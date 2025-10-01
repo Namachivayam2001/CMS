@@ -20,7 +20,7 @@ export default function HODList() {
     const { hods, isLoading } = useSelector(
         (state: RootState) => state.hod
     );
-    const { departments, isLoading: deptLoading, isError, message } = useSelector(
+    const { departments, isLoading: deptLoading } = useSelector(
         (state: RootState) => state.department
     ) as RootState['department'];
 
@@ -35,7 +35,6 @@ export default function HODList() {
     React.useEffect(() => {
         dispatch(fetchHODs());
         dispatch(fetchDepartments());
-        isError && toast.error(message);
     }, [dispatch]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,11 +202,15 @@ export default function HODList() {
                     "--Select-placeholderColor": "#bfc5cb", // gray-400
                 }}
             >
-            {departments.map((dept) => (
-                <Option key={dept._id} value={dept._id}>
-                    {dept.code} 
-                </Option>
-            ))}
+                {
+                    Array.isArray(departments) && departments.length > 0
+                    ? departments.map((dept) => (
+                        <Option key={dept._id} value={dept._id}>
+                            {dept.code} 
+                        </Option>
+                    ))
+                    : <Option value=""></Option>
+                }
             </Select>
             <Input
                 placeholder="Email"

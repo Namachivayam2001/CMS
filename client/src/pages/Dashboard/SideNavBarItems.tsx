@@ -11,12 +11,13 @@ export default function SidebarItems({ Role, onItemClick, }: { Role?: string; on
         case "Admin":
         items = [
             { name: "Dashboard", path: "/dashboard/admin" },
+            { name: "Manage Academic Years", path: "/dashboard/admin/academic-year-list" },
+            { name: "Manage Classes", path: "/dashboard/admin/class-list" },
             { name: "Manage Students", path: "/dashboard/admin/student-list" },
             { name: "Manage Teachers", path: "/dashboard/admin/teacher-list" },
             { name: "Manage HODs", path: "/dashboard/admin/hod-list" },
             { name: "Manage Departments", path: "/dashboard/admin/department-list" },
             { name: "Manage Courses", path: "/dashboard/admin/course-list" },
-            { name: "Manage Enrollments", path: "/dashboard/admin/enrollment-list" },
             { name: "Fees Management", path: "/dashboard/admin/fees" },
             { name: "Attendance", path: "/dashboard/admin/attendance" },
             { name: "Exams", path: "/dashboard/admin/exams" },

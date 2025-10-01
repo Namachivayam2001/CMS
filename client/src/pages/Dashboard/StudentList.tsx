@@ -1,8 +1,7 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../app/store";
-import { fetchStudents, createStudent } from "../../app/slices/studentSlice";
-import { fetchDepartments } from "../../app/slices/departmentSlice";
+import { fetchStudents, createStudent } from "../../app/slices/studentSlice"; 
 import { toast } from "react-toastify";
 import {
   Table,
@@ -14,28 +13,34 @@ import {
   Select,
   Option
 } from "@mui/joy";
+import { fetchClasses } from "../../app/slices/classSlice";
+import { fetchAcademicYears } from "../../app/slices/academicYearSlice";
+import { fetchDepartments } from "../../app/slices/departmentSlice";
 
 export default function StudentList() {
     const dispatch = useDispatch<AppDispatch>();
-    const { students, isLoading, message, isError } = useSelector(
+    const { students, isLoading } = useSelector(
         (state: RootState) => state.student
     );
-    const { departments, isLoading: deptLoading } = useSelector(
-        (state: RootState) => state.department
-    ) as RootState['department'];
+    const { academicYears } = useSelector( (state: RootState) => state.academicYear );
+    const { departments } = useSelector( (state: RootState) => state.department );
+    const { classes, isLoading: classLoading } = useSelector(
+        (state: RootState) => state.class
+    ) as RootState['class'];
 
     const [formData, setFormData] = React.useState({
         name: "",
         rollNumber: "",
-        department: "",
+        class: "",
         contactDetails: { email: "", phone: "" },
         dateOfJoining: "",
     });
 
     React.useEffect(() => {
         dispatch(fetchStudents());
-        dispatch(fetchDepartments());
-        isError && toast.error(message);
+        dispatch(fetchClasses());
+        dispatch(fetchAcademicYears());
+        dispatch(fetchDepartments())
     }, [dispatch]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -52,9 +57,9 @@ export default function StudentList() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const {name, rollNumber, department, contactDetails, dateOfJoining} = formData;
-        
-        if (!name.trim() || !rollNumber.trim() || !department.trim() || !contactDetails.email.trim() || !contactDetails.phone.trim() || !dateOfJoining.trim()) {
+        const {name, rollNumber, class: classId, contactDetails, dateOfJoining} = formData;
+
+        if (!name.trim() || !rollNumber.trim() || !classId.trim() || !contactDetails.email.trim() || !contactDetails.phone.trim() || !dateOfJoining.trim()) {
             toast.error("Please fill in all fields");
             return;
         }
@@ -72,9 +77,9 @@ export default function StudentList() {
             return;
         }
 
-        // Department
-        if (!department.trim()) {
-            toast.error("Please select a department");
+        // Class
+        if (!classId.trim()) {
+            toast.error("Please select a class");
             return;
         }
 
@@ -107,7 +112,7 @@ export default function StudentList() {
             setFormData({
                 name: "",
                 rollNumber: "",
-                department: "",
+                class: "",
                 contactDetails: { email: "", phone: "" },
                 dateOfJoining: "",
             });
@@ -178,23 +183,27 @@ export default function StudentList() {
                 />
                 {/* 🔽 Department Dropdown */}
                 <Select
-                    name="department"
-                    value={formData.department}
+                    name="class"
+                    value={formData.class}
                     onChange={(_, value) =>
-                        setFormData((prev) => ({ ...prev, department: value || "" }))
+                        setFormData((prev) => ({ ...prev, class: value || "" }))
                     }
-                    placeholder={deptLoading ? "Loading..." : "Department"}
+                    placeholder={classLoading ? "Loading..." : "Class"}
                     required
                     size="sm"
                     sx={{
                         "--Select-placeholderColor": "#bfc5cb", // gray-400
                     }}
                 >
-                    {departments.map((dept) => (
-                        <Option key={dept._id} value={dept._id}>
-                        {dept.code}
-                        </Option>
-                    ))}
+                    {
+                        Array.isArray(classes) && classes.length > 0
+                        ? classes.map((classItem) => (
+                            <Option key={classItem._id} value={classItem._id}>
+                                {departments.find((dept) => dept._id === classItem.department)?.code} - ({academicYears.find((year) => year._id === classItem.academicYear)?.year}) - Sec {classItem.section}
+                            </Option>
+                        ))
+                        : <Option value="">Class</Option>
+                    }
                 </Select>
                 <Input
                     placeholder="Email"
@@ -230,7 +239,7 @@ export default function StudentList() {
                     <tr>
                         <th>Name</th>
                         <th>Roll Number</th>
-                        <th>Department</th>
+                        <th>Class</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Date of Joining</th>
@@ -245,7 +254,7 @@ export default function StudentList() {
                     <tr key={student._id}>
                         <td style={tableDataStyle}>{student.name}</td>
                         <td style={tableDataStyle}>{student.rollNumber}</td>
-                        <td style={tableDataStyle}>{departments.find((dept) => dept._id === student.department)?.code}</td>
+                        <td style={tableDataStyle}>{departments.find((dept) => dept._id === classes.find((classItem) => classItem._id === student.class)?.department)?.code} - ({academicYears.find((year) => year._id === classes.find((classItem) => classItem._id === student.class)?.academicYear)?.year}) - Sec {classes.find((classItem) => classItem._id === student.class)?.section}</td>
                         <td style={tableDataStyle}>{student.contactDetails.email}</td>
                         <td style={tableDataStyle}>{student.contactDetails.phone}</td>
                         <td style={tableDataStyle}>{new Date(student.dateOfJoining).toLocaleDateString()}</td>

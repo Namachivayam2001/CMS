@@ -204,11 +204,15 @@ export default function TeacherList() {
                     "--Select-placeholderColor": "#bfc5cb", // gray-400
                 }}
             >
-            {departments.map((dept) => (
-                <Option key={dept._id} value={dept._id}>
-                    {dept.code} 
-                </Option>
-            ))}
+                {
+                    Array.isArray(departments) && departments.length > 0
+                    ? departments.map((dept) => (
+                        <Option key={dept._id} value={dept._id}>
+                            {dept.code} 
+                        </Option>
+                    ))
+                    : <Option value="">Department</Option>
+                }
             </Select>
             <Input
                 placeholder="Email"

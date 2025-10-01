@@ -9,7 +9,8 @@ const teacherRouters = require("./routes/teacherRoutes");
 const hodReducers = require('./routes/hodRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const courseRoutes = require('./routes/courseRoutes');
-const enrollmentRoutes = require('./routes/enrollmentRoutes');
+const classRoutes = require('./routes/classRoutes');
+const academicYearRoutes = require('./routes/academicYearRoutes');
 const connectDB  = require('./config/db');
 
 const PORT = process.env.PORT || 8080;
@@ -44,7 +45,8 @@ app.use('/api/teacher', teacherRouters);
 app.use('/api/hod', hodReducers);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/course', courseRoutes);
-app.use('/api/enrollment', enrollmentRoutes);
+app.use('/api/class', classRoutes);
+app.use('/api/academicYear', academicYearRoutes);
 
 // Health check endpoint
 
