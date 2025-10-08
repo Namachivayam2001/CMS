@@ -209,7 +209,7 @@ export default function HODList() {
                             {dept.code} 
                         </Option>
                     ))
-                    : <Option value=""></Option>
+                    : <Option value="">Department</Option>
                 }
             </Select>
             <Input
@@ -219,6 +219,7 @@ export default function HODList() {
                 onChange={handleChange}
                 required
                 size="sm"
+                style={{width: "245px"}}
             />
             <Input
                 placeholder="Phone"
@@ -247,7 +248,7 @@ export default function HODList() {
                     <th>Name</th>
                     <th>Employee ID</th>
                     <th>Department</th>
-                    <th>Email</th>
+                    <th style={{width: "250px"}}>Email</th>
                     <th>Phone</th>
                     <th>Date of Joining</th>
                     <th>Actions</th>
@@ -257,7 +258,7 @@ export default function HODList() {
             {Array.isArray(hods) && hods.length > 0 ? (
                 hods.map((hod) => (
                 <tr key={hod._id}>
-                    <td style={tableDataStyle}>{hod.name}</td>
+                    <td style={{...tableDataStyle, whiteSpace: "wrap"}}>{hod.name}</td>
                     <td style={tableDataStyle}>{hod.employeeId}</td>
                     <td style={tableDataStyle}>{departments.find((dept) => dept._id === hod.department)?.code}</td>
                     <td style={tableDataStyle}>{hod.contactDetails.email}</td>

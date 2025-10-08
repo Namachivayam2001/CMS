@@ -12,6 +12,7 @@ export interface AttendanceRecord {
 export interface Attendance {
   _id?: string;
   course: string;
+  class: string;
   date: string;
   records: AttendanceRecord[];
 }

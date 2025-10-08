@@ -24,7 +24,7 @@ const createCourse = async (req, res) => {
         const { name, code, class: classId, teacher, credits } = req.body;
 
         if (!name || !code || !classId || !teacher) {
-        return res.status(400).json({ success: false, message: "All fields are required" });
+            return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
         const classExists = await Class.findById(classId);
@@ -33,8 +33,8 @@ const createCourse = async (req, res) => {
         const teacherExists = await Teacher.findById(teacher);
         if (!teacherExists) return res.status(404).json({ success: false, message: "Teacher not found" });
 
-        const courseExists = await Course.findOne({ code: code.toUpperCase() });
-        if (courseExists) return res.status(400).json({ success: false, message: "Course with this code already exists" });
+        const courseExists = await Course.findOne({ name, code: code.toUpperCase(), classId });
+        if (courseExists) return res.status(400).json({ success: false, message: "Course with this Class already exists" });
 
         const course = await Course.create({
             name,

@@ -1,4 +1,5 @@
 const HOD = require("../models/HOD");
+const User = require("../models/User");
 
 // @desc Fetch all HODs
 // @route GET /api/hod/fetchAll
@@ -84,6 +85,15 @@ const createHOD = async (req, res) => {
                 message: "HOD with this Employee ID, Email, or Department already exists",
             });
         } 
+
+        const isUserExists = await User.findOne({ username: employeeId  });
+        if (isUserExists) {
+            return res.status(400).json({
+                success: false, 
+                message: "HOD with this Employee ID already exists in User Table",
+            });
+        } 
+
 
         // Create HOD
         const hod = await HOD.create({

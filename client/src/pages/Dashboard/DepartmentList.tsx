@@ -14,7 +14,7 @@ import {
 
 export default function DepartmentList() {
     const dispatch = useDispatch<AppDispatch>();
-    const { departments, isLoading, isError, message } = useSelector(
+    const { departments, isLoading } = useSelector(
         (state: RootState) => state.department
     );
 
@@ -24,8 +24,7 @@ export default function DepartmentList() {
     });
 
     React.useEffect(() => {
-        dispatch(fetchDepartments());
-        isError && toast.error(message);
+        dispatch(fetchDepartments()); 
     }, [dispatch]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,9 +41,9 @@ export default function DepartmentList() {
         try{
             const result = await dispatch(createDepartment(formData)).unwrap();
             
-            if(result?.success){
-                const newDepartment = result.data.department.name;
-                toast.success(`Department ${newDepartment} created successfully!`);
+            if(result?.success){ 
+                console.log(`Department ${result.data.department.name} created successfully!`)
+                toast.success(`Department created successfully!`);
             }
             setFormData({ name: "", code: "" });
         } catch (error) {

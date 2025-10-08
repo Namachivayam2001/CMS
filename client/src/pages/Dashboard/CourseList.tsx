@@ -84,7 +84,8 @@ export default function CourseList() {
         try {
             const result = await dispatch(createCourse(formData)).unwrap();
             if (result?.success) {
-                toast.success(`Course ${result.data.course.name} created successfully!`);
+                console.log(`Course ${result.data.course.name} created successfully!`);
+                toast.success(`Course created successfully!`);
                 setFormData({ name: '', code: '', class: '', teacher: '', credits: 3 });
             }
         } catch (error) {
@@ -163,6 +164,7 @@ export default function CourseList() {
                 size="sm"
                 sx={{
                     "--Select-placeholderColor": "#bfc5cb", // gray-400
+                    "width": "250px"
                 }}
             >
                 {
@@ -225,7 +227,7 @@ export default function CourseList() {
                 <tr>
                     <th>Name</th>
                     <th>Code</th>
-                    <th>Class</th>
+                    <th style={{width: "250px"}}>Class</th>
                     <th>Teacher</th>
                     <th>Credits</th>
                     <th>Actions</th>
@@ -238,7 +240,7 @@ export default function CourseList() {
                             <td style={tableDataStyle}>{c.name}</td>
                             <td style={tableDataStyle}>{c.code}</td>
                             <td style={tableDataStyle}>{departments.find((dept) => dept._id === classes.find((classItem) => classItem._id === c.class)?.department)?.code} - ({academicYears.find((year) => year._id === classes.find((classItem) => classItem._id === c.class)?.academicYear)?.year}) - Sec {classes.find((classItem) => classItem._id === c.class)?.section}</td>
-                            <td style={tableDataStyle}>{teachers.find((t) => t._id === c.teacher)?.name}</td> 
+                            <td style={{...tableDataStyle, whiteSpace: "wrap"}}>{teachers.find((t) => t._id === c.teacher)?.name}</td> 
                             <td style={tableDataStyle}>{c.credits}</td>
                             <td style={tableDataStyle}>–</td>
                         </tr>

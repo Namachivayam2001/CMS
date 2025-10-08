@@ -1,8 +1,7 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../app/store";
-import { fetchUsers } from "../../app/slices/userSlice";
-import { toast } from "react-toastify";
+import { fetchUsers } from "../../app/slices/userSlice"; 
 import {
   Table,
   Box,
@@ -11,11 +10,10 @@ import {
 
 export default function UserList() {
     const dispatch = useDispatch<AppDispatch>();
-    const { users, isError, message } = useSelector((state: RootState) => state.user);
+    const { users } = useSelector((state: RootState) => state.user);
 
     React.useEffect(() => {
         dispatch(fetchUsers());
-        isError && toast.error(message);
     }, [dispatch]);
 
     return (

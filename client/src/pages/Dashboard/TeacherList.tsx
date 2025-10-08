@@ -20,7 +20,7 @@ export default function TeacherList() {
     const { teachers, isLoading } = useSelector(
         (state: RootState) => state.teacher
     );
-    const { departments, isLoading: deptLoading, isError, message } = useSelector(
+    const { departments, isLoading: deptLoading } = useSelector(
         (state: RootState) => state.department
     ) as RootState['department'];
 
@@ -34,8 +34,7 @@ export default function TeacherList() {
 
     React.useEffect(() => {
         dispatch(fetchTeachers());
-        dispatch(fetchDepartments());
-        isError && toast.error(message);
+        dispatch(fetchDepartments()); 
     }, [dispatch]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,9 +109,9 @@ export default function TeacherList() {
             const result = await dispatch(createTeacher(formData)).unwrap();
             console.log("createTeacher Response:", result);
 
-            if (result?.success) {
-                const newTeacherName = result?.data?.teacher?.name;
-                toast.success(`Teacher ${newTeacherName} created successfully`);
+            if (result?.success) { 
+                console.log(`Teacher ${result?.data?.teacher?.name} created successfully`)
+                toast.success(`Teacher created successfully`);
             }
 
             // Reset form
@@ -221,6 +220,7 @@ export default function TeacherList() {
                 onChange={handleChange}
                 required
                 size="sm"
+                style={{width: "245px"}}
             />
             <Input
                 placeholder="Phone"
@@ -250,7 +250,7 @@ export default function TeacherList() {
                     <th>Name</th>
                     <th>Employee ID</th>
                     <th>Department</th>
-                    <th>Email</th>
+                    <th style={{width: "249px"}}>Email</th>
                     <th>Phone</th>
                     <th>Date of Joining</th>
                     <th>Actions</th>
@@ -260,7 +260,7 @@ export default function TeacherList() {
             {Array.isArray(teachers) && teachers.length > 0 ? (
             teachers.map((teacher) => (
                 <tr key={teacher._id}>
-                    <td style={tableDataStyle}>{teacher.name}</td>
+                    <td style={{...tableDataStyle, whiteSpace: "wrap"}}>{teacher.name}</td>
                     <td style={tableDataStyle}>{teacher.employeeId}</td>
                     <td style={tableDataStyle}>{departments.find((dept) => dept._id === teacher.department)?.code}</td>
                     <td style={tableDataStyle}>{teacher.contactDetails.email}</td>

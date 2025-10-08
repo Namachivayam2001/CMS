@@ -106,8 +106,8 @@ export default function StudentList() {
         try {
             const result = await dispatch(createStudent(formData)).unwrap();
             if (result?.success) {
-                const newStudent = result.data.student.name;
-                toast.success(`Student ${newStudent} created successfully`);
+                console.log(`Student ${result.data.student.name} created successfully`);
+                toast.success(`Student created successfully`);
             }
             setFormData({
                 name: "",
@@ -192,7 +192,8 @@ export default function StudentList() {
                     required
                     size="sm"
                     sx={{
-                        "--Select-placeholderColor": "#bfc5cb", // gray-400
+                        "--Select-placeholderColor": "#bfc5cb", // gray-400,
+                        "width": "249px"
                     }}
                 >
                     {
@@ -211,6 +212,7 @@ export default function StudentList() {
                     value={formData.contactDetails.email}
                     onChange={handleChange}
                     required
+                    style={{width: "245px"}}
                     size="sm"
                 />
                 <Input
@@ -239,8 +241,8 @@ export default function StudentList() {
                     <tr>
                         <th>Name</th>
                         <th>Roll Number</th>
-                        <th>Class</th>
-                        <th>Email</th>
+                        <th style={{width: "250px"}}>Class</th>
+                        <th style={{width: "250px"}}>Email</th>
                         <th>Phone</th>
                         <th>Date of Joining</th>
                         <th>Actions</th>

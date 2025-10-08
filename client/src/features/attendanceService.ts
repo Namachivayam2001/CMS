@@ -3,10 +3,10 @@ import type { Attendance } from "../app/slices/attendanceSlice";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
 const API_URL_FETCH_ATTENDANCES = `${API_BASE_URL}/attendances`;
-const API_URL_CREATE_ATTENDANCE = `${API_BASE_URL}/attendances`;
+const API_URL_CREATE_ATTENDANCE = `${API_BASE_URL}/attendance/mark`;
 const API_URL_UPDATE_ATTENDANCE = (id: string) => `${API_BASE_URL}/attendances/${id}`;
 
-export interface FetchAttendanceResponse {
+export interface FetchAttendanceResponse { 
   success: boolean;
   data: {
     attendances: Attendance[];
@@ -31,9 +31,13 @@ const attendanceService = {
   },
 
   createAttendance: async (attendanceData: Attendance, token: string): Promise<CreateAttendanceResponse> => {
+    console.log("API: ", API_URL_CREATE_ATTENDANCE)
+    
     const response = await axios.post(API_URL_CREATE_ATTENDANCE, attendanceData, {
       headers: { Authorization: `Bearer ${token}` },
     });
+
+    console.log(response)
     return response.data;
   },
 

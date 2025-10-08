@@ -1,11 +1,18 @@
 const express = require("express");
-const { markAttendance, getCourseAttendance, getStudentAttendance } = require("../controllers/attendanceController");
-const { authenticate, authorize } = require("../middleware/auth");
-
 const router = express.Router();
+const {
+  getAllAttendances,
+  markAttendance,
+  updateAttendance,
+  getCourseAttendance,
+  getStudentAttendance,
+} = require("../controllers/attendanceController");
 
-router.post("/mark", authenticate, authorize("Teacher", "HOD"), markAttendance);
-router.get("/course/:id", authenticate, authorize("Teacher", "HOD"), getCourseAttendance);
-router.get("/student/:id", authenticate, authorize("Student", "HOD", "Teacher"), getStudentAttendance);
+// Public/Authorized routes
+router.get("/attendances", getAllAttendances);
+router.post("/attendance/mark", markAttendance);
+router.put("/attendances/:id", updateAttendance);
+router.get("/attendance/course/:id", getCourseAttendance);
+router.get("/attendance/student/:id", getStudentAttendance);
 
 module.exports = router;

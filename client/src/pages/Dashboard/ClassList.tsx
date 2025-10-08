@@ -75,7 +75,7 @@ export default function ClassList() {
                 });
             }
         } catch (err) {
-            toast.error((err as string) || "Failed to create class");
+            console.log((err as string) || "Failed to create class");
             toast.error(err as string || 'Create Class failed. Please try again.');
         }
     };
