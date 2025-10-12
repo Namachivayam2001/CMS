@@ -12,6 +12,11 @@ const AttendanceSchema = new mongoose.Schema(
             ref: "Course",
             required: true,
         },
+        period: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "Period", 
+            required: true 
+        },
         date: {
             type: Date,
             required: true,

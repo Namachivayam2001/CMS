@@ -11,6 +11,7 @@ const attendanceRoutes = require('./routes/attendanceRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const classRoutes = require('./routes/classRoutes');
 const academicYearRoutes = require('./routes/academicYearRoutes');
+const periodRoutes = require('./routes/periodRoutes');
 const connectDB  = require('./config/db');
 
 const PORT = process.env.PORT || 8080;
@@ -47,6 +48,7 @@ app.use('/api', attendanceRoutes);
 app.use('/api/course', courseRoutes);
 app.use('/api/class', classRoutes);
 app.use('/api/academicYear', academicYearRoutes);
+app.use('/api/period', periodRoutes);
 
 // Health check endpoint
 

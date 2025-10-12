@@ -8,6 +8,8 @@ import userReducer from './slices/userSlice.ts'
 import courseReducer from './slices/courseSlice.ts'
 import classReducer from './slices/classSlice.ts'
 import academicYearReducer from './slices/academicYearSlice.ts'
+import periodReducer from './slices/periodSlice.ts'
+import attendanceReducer from './slices/attendanceSlice.ts'
 
 const store = configureStore({
     reducer: {
@@ -20,6 +22,8 @@ const store = configureStore({
         student: studentReducer,
         teacher: teacherReducer,
         hod: hodReducer,
+        period: periodReducer,
+        attendance: attendanceReducer,
     }
 })
 

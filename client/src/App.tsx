@@ -14,6 +14,7 @@ import CourseList from './pages/Dashboard/CourseList';
 import PutAttendance from './components/PutAttendance';
 import ClassList from './pages/Dashboard/ClassList';
 import AcademicYearList from './pages/Dashboard/AcademicYearList';
+import PeriodList from './pages/Dashboard/PeriodList';
 
 // ✅ Define theme without initialColorScheme
 const customTheme = extendTheme({
@@ -42,6 +43,7 @@ function App() {
                         <Route path={'teacher-list'} element={<TeacherList />} />
                         <Route path={'course-list'} element={<CourseList />} />
                         <Route path={'attendance'} element={<PutAttendance />} />
+                        <Route path={'period-list'} element={<PeriodList />}/>
                     </Route>
                     <Route path="*" element={<h1>404 Not Found</h1>} />
                 </Routes>

@@ -4,9 +4,10 @@ import type { RootState, AppDispatch } from "../app/store";
 import { fetchStudents } from "../app/slices/studentSlice";
 import { fetchCourses } from "../app/slices/courseSlice";
 import { fetchClasses } from "../app/slices/classSlice";
-import { createAttendance } from "../app/slices/attendanceSlice";
+import { createAttendance, fetchAttendances } from "../app/slices/attendanceSlice";
 import { fetchDepartments } from "../app/slices/departmentSlice";
 import { fetchAcademicYears } from "../app/slices/academicYearSlice";
+import { fetchPeriods } from "../app/slices/periodSlice";
 import { toast } from "react-toastify";
 
 // Icons
@@ -35,6 +36,8 @@ export default function PutAttendance() {
     const { students } = useSelector((state: RootState) => state.student);
     const { departments } = useSelector((state: RootState) => state.department);
     const { academicYears } = useSelector((state: RootState) => state.academicYear);
+    const { periods } = useSelector((state: RootState) => state.period);
+    const { attendances } = useSelector((state: RootState) => state.attendance);
 
     const { courses, isLoading: courseLoading } = useSelector(
         (state: RootState) => state.course
@@ -44,6 +47,7 @@ export default function PutAttendance() {
     const [selectedCourseName, setSelectedCourseName] = React.useState<string>("");
     const [selectedClass, setSelectedClass] = React.useState<string>("");
     const [attendanceDate, setAttendanceDate] = React.useState<Date>(new Date());
+    const [selectedPeriod, setSelectedPeriod] = React.useState<string>("");
     const [attendanceRecords, setAttendanceRecords] = React.useState<
         { student: string; status: AttendanceStatus }[]
     >([]);
@@ -60,6 +64,8 @@ export default function PutAttendance() {
         dispatch(fetchClasses());
         dispatch(fetchDepartments());
         dispatch(fetchAcademicYears());
+        dispatch(fetchPeriods());
+        dispatch(fetchAttendances());
     }, [dispatch]);
 
     // ✅ Filter classes related to the selected course name
@@ -72,23 +78,66 @@ export default function PutAttendance() {
             .filter(Boolean);
     }, [selectedCourseName, courses, classes]);
 
-    // ✅ When both course and class are selected → prepare attendance records
+     // ✅ Prefill existing attendance or initialize default
     React.useEffect(() => {
-        if (selectedCourseName && selectedClass && students.length) {
-            const classStudents = students.filter(
-                (s) => s.class === selectedClass
+        if (
+            selectedCourseName &&
+            selectedClass &&
+            selectedPeriod &&
+            students.length &&
+            attendances.length
+        ) {
+            const selectedCourse = courses.find(
+                (c) => c.name === selectedCourseName && c.class === selectedClass
             );
+            if (!selectedCourse) return;
 
+            const existingAttendance = attendances.find((a) => {
+                const dbDate = new Date(a.date).toISOString().slice(0, 10);
+                const selectedDate = attendanceDate.toISOString().slice(0, 10);
+
+                return (
+                    a.course === selectedCourse._id &&
+                    a.class === selectedClass &&
+                    a.period === selectedPeriod &&
+                    dbDate === selectedDate
+                );
+            });
+
+
+            if (existingAttendance) {
+                // ✅ Pre-fill existing attendance
+                setAttendanceRecords(existingAttendance.records);
+                toast.info("Attendance already exists. Records pre-filled.");
+            } else {
+                // ✅ Default absent if no existing record
+                const classStudents = students.filter((s) => s.class === selectedClass);
+                setAttendanceRecords(
+                    classStudents.map((s) => ({
+                        student: s._id as string,
+                        status: "absent",
+                    }))
+                );
+            }
+        } else if (selectedCourseName && selectedClass && students.length) {
+            const classStudents = students.filter((s) => s.class === selectedClass);
             setAttendanceRecords(
                 classStudents.map((s) => ({
                     student: s._id as string,
-                    status: "absent", // default
+                    status: "absent",
                 }))
             );
         } else {
             setAttendanceRecords([]);
         }
-    }, [selectedCourseName, selectedClass, students]);
+    }, [
+        selectedCourseName,
+        selectedClass,
+        selectedPeriod,
+        attendanceDate,
+        students,
+        attendances,
+    ]);
 
     const updateStatus = (studentId: string, status: AttendanceStatus) => {
         setAttendanceRecords((prev) =>
@@ -110,18 +159,13 @@ export default function PutAttendance() {
         );
 
         if (!selectedCourse) return toast.error("Invalid course/class selection");
-        console.log({
-                    course: selectedCourse._id,
-                    class: selectedClass,
-                    date: attendanceDate.toISOString().slice(0, 10),
-                    records: attendanceRecords,
-                });
 
         try {
             await dispatch(
                 createAttendance({
                     course: selectedCourse._id,
                     class: selectedClass,
+                    period: selectedPeriod,
                     date: attendanceDate.toISOString().slice(0, 10),
                     records: attendanceRecords,
                 })
@@ -202,6 +246,19 @@ export default function PutAttendance() {
                     onChange={(e) => setAttendanceDate(new Date(e.target.value))}
                     size="sm"
                 />
+
+                <Select
+                    value={selectedPeriod}
+                    onChange={(_, val) => setSelectedPeriod(val ?? "")}
+                    placeholder="Select Period"
+                    required
+                >
+                    {periods.map((p) => (
+                        <Option key={p._id} value={p._id}>
+                            {p.name} ({p.startTime} - {p.endTime})
+                        </Option>
+                    ))}
+                </Select>
 
                 {/* Bulk Mark Buttons */}
                 <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "repeat(3, 1fr)" }}>
